@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="AI Opportunity Brief" icon-name="custom:custom19">
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters slds-wrap">
+                <div class="slds-col slds-size_1-of-2">
+                    <p class="slds-text-title_caps">AI Relevancy Score</p>
+                    <p class="slds-text-heading_medium">{score}</p>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <p class="slds-text-title_caps">Strategic Fit</p>
+                    <p class="slds-text-heading_medium">{strategicFit}</p>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-m-top_small">
+                    <p class="slds-text-title_caps">Pursuit Priority</p>
+                    <p>{priority}</p>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-m-top_small">
+                    <p class="slds-text-title_caps">Incumbent</p>
+                    <p>{incumbent}</p>
+                </div>
+            </div>
+            <div class="slds-m-top_medium">
+                <p class="slds-text-title_caps">Brief Summary</p>
+                <lightning-formatted-rich-text value={brief}></lightning-formatted-rich-text>
+            </div>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,21 @@
+<template>
+    <lightning-card title="Top Pipeline Candidates" icon-name="standard:opportunity">
+        <div class="slds-p-around_medium">
+            <template if:true={candidates.length}>
+                <lightning-datatable
+                    key-field="Id"
+                    data={candidates}
+                    columns={columns}
+                    hide-checkbox-column
+                    onrowaction={handleRowAction}>
+                </lightning-datatable>
+            </template>
+            <template if:true={error}>
+                <p class="slds-text-color_error">Unable to load Pipeline Candidates.</p>
+            </template>
+            <template if:false={candidates.length}>
+                <p class="slds-text-color_weak">No Pipeline Candidates found.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>
