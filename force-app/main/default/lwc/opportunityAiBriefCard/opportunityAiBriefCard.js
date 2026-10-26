@@ -6,8 +6,9 @@ import STRATEGIC_FIT from '@salesforce/schema/Opportunity.Strategic_Fit__c';
 import BRIEF from '@salesforce/schema/Opportunity.AI_Brief_Summary__c';
 import INCUMBENT from '@salesforce/schema/Opportunity.Incumbent__c';
 import PRIORITY from '@salesforce/schema/Opportunity.Pursuit_Priority__c';
+import NAICS from '@salesforce/schema/Opportunity.NAICS_Tags__c';
 
-const FIELDS = [AI_SCORE, STRATEGIC_FIT, BRIEF, INCUMBENT, PRIORITY];
+const FIELDS = [AI_SCORE, STRATEGIC_FIT, BRIEF, INCUMBENT, PRIORITY, NAICS];
 
 export default class OpportunityAiBriefCard extends LightningElement {
     @api recordId;
@@ -24,7 +25,7 @@ export default class OpportunityAiBriefCard extends LightningElement {
     }
 
     get brief() {
-        return getFieldValue(this.opportunity.data, BRIEF) || 'No AI brief generated yet.';
+        return getFieldValue(this.opportunity.data, BRIEF) || 'No AI brief generated yet. Use the Opportunity Intelligence Agent to create one.';
     }
 
     get incumbent() {
@@ -33,5 +34,16 @@ export default class OpportunityAiBriefCard extends LightningElement {
 
     get priority() {
         return getFieldValue(this.opportunity.data, PRIORITY) || '—';
+    }
+
+    get naics() {
+        return getFieldValue(this.opportunity.data, NAICS) || '—';
+    }
+
+    get scoreClass() {
+        const s = this.score;
+        if (s >= 90) return 'slds-text-color_success';
+        if (s >= 75) return 'slds-text-color_warning';
+        return '';
     }
 }

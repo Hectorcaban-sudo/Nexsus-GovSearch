@@ -1,5 +1,37 @@
 <template>
-    <lightning-card title="Top Pipeline Candidates" icon-name="standard:opportunity">
+    <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+            <article class="slds-card">
+                <div class="slds-card__body slds-card__body_inner">
+                    <h3 class="slds-text-heading_small">Top Pipeline Candidates</h3>
+                    <p class="slds-text-heading_large slds-m-top_small">{candidates.length}</p>
+                    <p class="slds-text-color_weak">AI-scored best fits</p>
+                </div>
+            </article>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+            <article class="slds-card">
+                <div class="slds-card__body slds-card__body_inner">
+                    <h3 class="slds-text-heading_small">High-Score Alerts</h3>
+                    <p class="slds-text-heading_large slds-m-top_small">{highScoreCount}</p>
+                    <p class="slds-text-color_weak">Score ≥ 85</p>
+                </div>
+            </article>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+            <article class="slds-card">
+                <div class="slds-card__body slds-card__body_inner">
+                    <h3 class="slds-text-heading_small">Total Pipeline Value</h3>
+                    <p class="slds-text-heading_large slds-m-top_small">
+                        <lightning-formatted-number value={totalValue} format-style="currency" currency-code="USD"></lightning-formatted-number>
+                    </p>
+                    <p class="slds-text-color_weak">Estimated</p>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <lightning-card title="AI-Optimized Pipeline Candidates" icon-name="standard:opportunity">
         <div class="slds-p-around_medium">
             <template if:true={candidates.length}>
                 <lightning-datatable
@@ -11,10 +43,10 @@
                 </lightning-datatable>
             </template>
             <template if:true={error}>
-                <p class="slds-text-color_error">Unable to load Pipeline Candidates.</p>
+                <div class="slds-text-color_error">Unable to load Pipeline Candidates. Ensure PipelineScoutService.getTopCandidates is available.</div>
             </template>
             <template if:false={candidates.length}>
-                <p class="slds-text-color_weak">No Pipeline Candidates found.</p>
+                <div class="slds-text-color_weak slds-p-around_medium">No Pipeline Candidates found. Load sample data or connect external sources.</div>
             </template>
         </div>
     </lightning-card>
