@@ -7,7 +7,7 @@ This document contains Mermaid diagrams for architecture, user workflows, data f
 ```mermaid
 flowchart TD
     subgraph External["External Data Sources"]
-        SAM[SAM.gov]
+        SAM[SAM.gov<br/>Get Opportunities API]
         USA[USAspending]
         FC[FedConnect]
         PIEE[PIEE]
@@ -16,9 +16,15 @@ flowchart TD
     end
 
     subgraph Integration["Integration Layer"]
+        DCIngest[Data Cloud Ingestion API]
         Callout[PipelineScoutCalloutService<br/>Pull via Named Credential]
-        Ingest[PipelineCandidateIngestionService<br/>Push via Apex REST]
-        DataCloud[Data Cloud / MuleSoft]
+        ApexIngest[PipelineCandidateIngestionService<br/>Apex REST]
+        Mule[MuleSoft]
+    end
+
+    subgraph DataCloud["Data Cloud"]
+        Stream[Data Stream / DMO<br/>Pipeline Candidate]
+        Enrich[Unification & Insights]
     end
 
     subgraph Salesforce["Salesforce Platform"]
@@ -34,19 +40,25 @@ flowchart TD
         App[Nexsus GovSearch App]
     end
 
-    External -->|Pull| Callout
-    External -->|Push| Ingest
-    External --> DataCloud
+    SAM -->|Pull or Push| DCIngest
+    SAM -->|Pull| Callout
+    External --> Mule
+    Mule --> DCIngest
+    Mule --> ApexIngest
+
+    DCIngest --> Stream
+    Stream --> Enrich
+    Enrich -->|CRM Sync| PC
+    Enrich -->|Grounding| Agents
 
     Callout --> PC
-    Ingest --> PC
-    DataCloud --> PC
+    ApexIngest --> PC
 
     PC --> Score
     Score --> PC
     Score --> Log
     Callout --> Log
-    Ingest --> Log
+    ApexIngest --> Log
 
     PC --> Opp
     PC --> LWC
@@ -66,7 +78,7 @@ flowchart LR
         Sched[Schedulable / Button]
         CalloutSvc[PipelineScoutCalloutService]
         NamedCred[Named Credential]
-        ExtAPI[External API]
+        ExtAPI[External API<br/>SAM.gov]
         Upsert1[Upsert Pipeline_Candidate__c]
         Score1[PipelineScoutService.refreshScoresFor]
     end
@@ -78,7 +90,7 @@ flowchart LR
     CalloutSvc --> Upsert1
     Upsert1 --> Score1
 
-    subgraph Push["Push Pattern - Ingestion API"]
+    subgraph Push["Push Pattern - Apex REST"]
         ExtSys[External System / MuleSoft]
         REST[POST /nexsus/pipeline-candidates]
         IngestSvc[PipelineCandidateIngestionService]
@@ -90,9 +102,46 @@ flowchart LR
     REST --> IngestSvc
     IngestSvc --> Upsert2
     Upsert2 --> Score2
+
+    subgraph DataCloudPath["Data Cloud Ingestion"]
+        ExtOrMule[External / MuleSoft]
+        DCAPI[Data Cloud Ingestion API]
+        DMO[Data Stream / DMO]
+        Sync[CRM Sync]
+        PC3[Pipeline_Candidate__c]
+    end
+
+    ExtOrMule --> DCAPI
+    DCAPI --> DMO
+    DMO --> Sync
+    Sync --> PC3
 ```
 
-## 3. Pipeline Scout User Workflow
+## 3. SAM.gov to Data Cloud Sequence
+
+```mermaid
+sequenceDiagram
+    participant Middleware as Middleware / MuleSoft
+    participant SAM as SAM.gov API
+    participant DC as Data Cloud Ingestion API
+    participant DMO as Pipeline Candidate DMO
+    participant CRM as Pipeline_Candidate__c
+    participant Score as PipelineScoutService
+    participant Agent as Agentforce
+
+    Middleware->>SAM: GET /opportunities/v2/search<br/>(api_key, postedFrom, postedTo, limit, offset)
+    SAM-->>Middleware: opportunitiesData array
+    Middleware->>Middleware: Transform to DMO payload<br/>(noticeId → externalId, etc.)
+    Middleware->>DC: POST ingestion records
+    DC->>DMO: Store in Data Stream
+    DMO->>CRM: Data Cloud-to-CRM Sync<br/>(match on External_Id__c)
+    CRM->>Score: Trigger refreshScoresFor
+    Score->>CRM: Update AI_Relevancy_Score__c
+    Agent->>DMO: Ground on Data Cloud data
+    Agent->>CRM: Query scored candidates
+```
+
+## 4. Pipeline Scout User Workflow
 
 ```mermaid
 flowchart TD
@@ -113,7 +162,7 @@ flowchart TD
     Team --> End([Pursuit decision complete])
 ```
 
-## 4. Opportunity Intelligence Workflow
+## 5. Opportunity Intelligence Workflow
 
 ```mermaid
 sequenceDiagram
@@ -137,18 +186,20 @@ sequenceDiagram
     Agent-->>User: Answers grounded in record + related data
 ```
 
-## 5. Scoring Process
+## 6. Scoring Process
 
 ```mermaid
 flowchart TD
     Trigger[New or updated<br/>Pipeline_Candidate__c]
     Trigger --> Source{Source?}
     Source -->|Callout| CalloutDone[PipelineScoutCalloutService]
-    Source -->|Ingestion| IngestDone[PipelineCandidateIngestionService]
+    Source -->|Apex Ingestion| IngestDone[PipelineCandidateIngestionService]
+    Source -->|Data Cloud Sync| DCSync[Data Cloud CRM Sync]
     Source -->|Manual| Manual[User or Flow]
 
     CalloutDone --> Score[PipelineScoutService.refreshScoresFor]
     IngestDone --> Score
+    DCSync --> Score
     Manual --> Score
 
     Score --> Logic[Apply scoring rules<br/>Value, Type, NAICS, Past Performance]
@@ -157,7 +208,7 @@ flowchart TD
     Log --> Dashboard[LWC refreshes<br/>or Agent queries]
 ```
 
-## 6. Agentforce Interaction Overview
+## 7. Agentforce Interaction Overview
 
 ```mermaid
 flowchart LR
@@ -174,17 +225,18 @@ flowchart LR
 
     Scout --> PC[Pipeline_Candidate__c]
     Scout --> ScoreSvc[PipelineScoutService]
+    Scout --> DMO[Data Cloud DMO]
     Intel --> Opp[Opportunity]
     Intel --> BriefSvc[OpportunityIntelligenceService]
     Research --> Contact[Government_Contact__c]
     Research --> Award[Award__c]
 ```
 
-## 7. Logging & Error Handling
+## 8. Logging & Error Handling
 
 ```mermaid
 flowchart TD
-    Process[Callout / Ingestion / Scoring]
+    Process[Callout / Ingestion / Scoring / Data Cloud Sync]
     Process -->|Success| Info[IntegrationLogger.info]
     Process -->|Warning| Warn[IntegrationLogger.warn]
     Process -->|Error| Err[IntegrationLogger.error]

@@ -1,143 +1,158 @@
 # External Data Sources & Mapping Guide
 
-This guide covers setting up external federal data sources for Nexsus GovSearch, including recommended integration patterns, field mappings, and best practices.
+This guide covers setting up external federal data sources for Nexsus GovSearch, including recommended integration patterns, field mappings, and best practices. SAM.gov is a primary source via the public Get Opportunities API.
 
 ## Supported Sources
 
 | Source | Primary Data | Recommended Integration |
 |--------|--------------|-------------------------|
-| SAM.gov | Opportunities, Solicitations, Notices | Apex callouts, Ingestion API, MuleSoft, or Data Cloud |
-| USAspending | Awards, Obligated Spend, Vendors | Apex callouts, Ingestion API, or scheduled sync |
-| FedConnect | Task Orders, RFPs | MuleSoft or Ingestion API |
+| SAM.gov | Opportunities, Solicitations, Notices | Data Cloud Ingestion API, Apex callouts, or MuleSoft |
+| USAspending | Awards, Obligated Spend, Vendors | Data Cloud, Apex callouts, or scheduled sync |
+| FedConnect | Task Orders, RFPs | MuleSoft or Data Cloud |
 | PIEE | Invoices, Contract Data | MuleSoft preferred |
-| Agency Forecasts | Planned procurements | Manual, Ingestion API, or scheduled import |
+| Agency Forecasts | Planned procurements | Data Cloud or manual import |
 | Proprietary Contacts | Decision makers, org charts | Data Cloud or managed package |
 
 ## Recommended Architecture
 
-1. **Data Cloud (preferred for scale)**  
-   - Connect external sources via Data Cloud connectors or custom connectors.  
-   - Use Data Cloud to unify and ground Agentforce agents.  
-   - Sync key records into Salesforce custom objects via Data Streams or calculated insights.
+1. **Data Cloud Ingestion API (preferred for scale)**  
+   - Stream external data (including SAM.gov) into Data Cloud via the Ingestion API.  
+   - Unify, enrich, and ground Agentforce agents directly on Data Cloud.  
+   - Sync qualified records into Salesforce CRM objects (`Pipeline_Candidate__c`) via Data Cloud-to-CRM sync.
 
-2. **Ingestion API (Push from external systems)**  
-   - Apex REST endpoint: `/services/apexrest/nexsus/pipeline-candidates`  
-   - External systems, MuleSoft, or middleware POST Pipeline Candidate payloads.  
-   - Supports single or bulk records, upserts via `External_Id__c`, and automatically triggers scoring.  
-   - Ideal when the source system can push data or when you want to avoid Salesforce-initiated callouts.
+2. **Apex REST Ingestion API (Push into CRM)**  
+   - Endpoint: `/services/apexrest/nexsus/pipeline-candidates`  
+   - External systems or middleware POST payloads that upsert directly into `Pipeline_Candidate__c` and trigger scoring.
 
 3. **MuleSoft Anypoint Platform**  
-   - Build APIs that normalize SAM.gov / USAspending data.  
-   - Push enriched records into Salesforce via the Ingestion API, Composite API, or Bulk API.  
-   - Handle authentication, rate limits, and transformation.
+   - Normalize SAM.gov / USAspending data and push via Data Cloud Ingestion API or the Apex REST endpoint.
 
-4. **Apex Callouts + Platform Events**  
-   - Suitable for lighter volumes or proof-of-concept.  
-   - Use Named Credentials for authentication.  
-   - Publish Platform Events for real-time updates to Pipeline Candidates.
+4. **Apex Callouts**  
+   - Pull pattern using Named Credentials (see `PipelineScoutCalloutService`).
 
 5. **Scheduled Apex / Batch**  
-   - Nightly jobs that call external APIs and upsert Pipeline_Candidate__c, Solicitation__c, and Award__c records.
+   - Nightly or incremental syncs.
 
-## Ingestion API Usage
+## Data Cloud Ingestion API
 
-**Endpoint**: `POST /services/apexrest/nexsus/pipeline-candidates`
+Data Cloud’s Ingestion API is ideal for high-volume or continuous streaming from SAM.gov and other federal sources.
 
-**Authentication**: Standard Salesforce OAuth (Connected App) or Named Principal.
+### High-Level Flow
 
-**Example Request Body**:
+1. External system or middleware calls the SAM.gov Get Opportunities API.
+2. Transform the response and POST to the Data Cloud Ingestion API.
+3. Data lands in a Data Stream / Data Model Object (DMO).
+4. Apply calculated insights or identity resolution if needed.
+5. Sync selected records to `Pipeline_Candidate__c` (match on `External_Id__c`).
+6. Pipeline Scout scoring and Agentforce agents run against the CRM records and/or Data Cloud.
+
+### Setup Steps
+
+1. Enable Data Cloud in the org.
+2. Create a Connected App (or use Data Cloud credentials) with the required Ingestion API scopes.
+3. Define a Data Stream and DMO for Pipeline Candidates (see field mapping below).
+4. Configure the Ingestion API endpoint for the source.
+5. Build the transformation (MuleSoft DataWeave, Apex, or external middleware) from SAM.gov JSON to the DMO payload.
+6. Set up Data Cloud-to-CRM sync targeting `Pipeline_Candidate__c`.
+7. Ground Agentforce agents on the DMO and/or synced CRM records.
+8. Monitor ingestion via Data Cloud logs and `Integration_Log__c` (if additional CRM-side logging is used).
+
+### SAM.gov Get Opportunities Public API
+
+- **Documentation**: https://open.gsa.gov/api/get-opportunities-public-api/
+- **Production Endpoint**: `GET https://api.sam.gov/opportunities/v2/search`
+- **Authentication**: Public API key (`api_key` query parameter). Generate on the SAM.gov Account Details page.
+- **Key Parameters**:
+  - `postedFrom` / `postedTo` (required, MM/dd/yyyy, max 1-year range)
+  - `limit` (max 1000) and `offset` for pagination
+  - `ptype`, `ncode` (NAICS), `organizationName`, `rdlfrom`/`rdlto`, etc.
+- **Response**: `opportunitiesData` array of opportunity objects.
+- **Rate Limits**: Daily limits vary by user role (federal / non-federal / general).
+
+**Important SAM.gov Fields**:
+- `noticeId` — unique identifier
+- `title`
+- `solicitationNumber`
+- `fullParentPathName` — hierarchical agency/office
+- `type` / `baseType`
+- `postedDate`
+- `responseDeadLine`
+- `naicsCode`
+- `award` object (amount, awardee, date)
+- `pointOfContact` array
+- `setAside` / `setAsideCode`
+- `active`
+
+### Data Cloud DMO Field Mapping (SAM.gov → Pipeline Candidate)
+
+| SAM.gov Field | Data Cloud DMO Field | Salesforce CRM Field | Notes |
+|---------------|----------------------|----------------------|-------|
+| noticeId | externalId | External_Id__c | Primary match key for upsert |
+| title | name | Name | |
+| fullParentPathName | agency | Agency__c | Hierarchical agency name |
+| type or baseType | candidateType | Candidate_Type__c | Map: Solicitation, Award Notice, etc. → Solicitation / Recompete / Task Order |
+| award.amount (if present) | estimatedValue | Estimated_Value__c | Or use other value fields when available |
+| naicsCode | naics | NAICS__c | |
+| responseDeadLine | dueDate | Due_Date__c | Parse date |
+| award.awardee.name (if present) | incumbent | Incumbent__c | |
+| (constant) | sourceSystem | Source_System__c | "SAM.gov" |
+| active | status | Status__c | Map Yes → New/Active |
+
+### Example Data Cloud Ingestion Payload Concept
+
 ```json
 {
-  "candidates": [
+  "records": [
     {
-      "externalId": "SAM-123456",
-      "name": "Army IT Modernization Recompete",
-      "agency": "Department of the Army",
-      "candidateType": "Recompete",
-      "estimatedValue": 249000000,
+      "externalId": "abc123-notice-id",
+      "name": "IT Modernization Support Services",
+      "agency": "Department of Defense.Department of the Army",
+      "candidateType": "Solicitation",
+      "estimatedValue": 15000000,
       "naics": "541512",
-      "dueDate": "2026-12-15",
+      "dueDate": "2026-11-30",
       "sourceSystem": "SAM.gov",
-      "incumbent": "Lockheed Martin",
+      "incumbent": null,
       "status": "New"
     }
   ]
 }
 ```
 
-**Example Response** (200 or 207):
-```json
-{
-  "success": true,
-  "totalReceived": 1,
-  "successCount": 1,
-  "errorCount": 0,
-  "errors": [],
-  "processedExternalIds": ["SAM-123456"]
-}
-```
+### Apex REST Ingestion API (Alternative / Complement)
 
-- Partial success returns HTTP 207 with details in the `errors` array.
-- All activity is logged to `Integration_Log__c`.
-- Successful records are automatically scored via `PipelineScoutService.refreshScoresFor`.
+**Endpoint**: `POST /services/apexrest/nexsus/pipeline-candidates`
 
-## Field Mapping Examples
-
-### SAM.gov Opportunity → Pipeline_Candidate__c
-
-| External Field | Salesforce Field | Notes |
-|----------------|------------------|-------|
-| title | Name | |
-| department / agency | Agency__c | |
-| type (solicitation, award, etc.) | Candidate_Type__c | Map to Recompete / Solicitation / Task Order |
-| estimatedValue or awardAmount | Estimated_Value__c | |
-| naicsCode | NAICS__c | |
-| responseDeadline | Due_Date__c | |
-| noticeId or solicitationNumber | External_Id__c | Required for upsert |
-| incumbent / awardee | Incumbent__c | |
-
-### USAspending Award → Award__c
-
-| External Field | Salesforce Field | Notes |
-|----------------|------------------|-------|
-| award_id | Award_Number__c | |
-| recipient_name | Incumbent__c | |
-| total_obligation | Value__c | |
-| period_of_performance_end | Expiration_Date__c | |
-| naics_code | NAICS__c | |
-
-### Contact Intelligence
-
-Map senior decision makers into `Government_Contact__c` with:
-- Title__c
-- Bio_Snippet__c
-- Influence_Rating__c
-- Agency_Office__c
-- Org chart parent relationship
+Use this when you want to write directly into CRM objects. See previous sections for request/response examples. It automatically triggers `PipelineScoutService.refreshScoresFor`.
 
 ## Implementation Steps
 
-1. **Create Named Credentials** for each external system (for callout pattern).
-2. **Define External IDs** on Pipeline_Candidate__c, Solicitation__c, and Award__c for safe upserts.
-3. **Choose push (Ingestion API) or pull (Callout)** based on source system capabilities.
-4. **Build transformation logic** (MuleSoft DataWeave or Apex) that maps external schemas to the fields above.
-5. **Schedule or event-drive** the sync.
-6. **Trigger AI scoring** (Pipeline Scout Agent or Apex) after new records are inserted.
-7. **Ground Agentforce** agents in the synced Salesforce records and/or Data Cloud.
+1. Obtain a SAM.gov public API key.
+2. Choose the primary ingestion path:
+   - Data Cloud Ingestion API (recommended for scale + Agentforce grounding)
+   - Apex Callout (`PipelineScoutCalloutService`)
+   - Apex REST Ingestion API
+3. Implement transformation logic that maps SAM.gov fields to the DMO or CRM fields above.
+4. Configure pagination and incremental loads (use `postedFrom`/`postedTo` windows).
+5. Set up Data Cloud-to-CRM sync if using Data Cloud.
+6. Trigger AI scoring after new Pipeline Candidates arrive.
+7. Ground Agentforce agents appropriately.
+8. Monitor rate limits and log failures.
 
 ## Security & Compliance Notes
 
-- Use Named Credentials and External Credentials; never hard-code keys.
-- For the Ingestion API, use a Connected App with least-privilege OAuth scopes.
-- Respect rate limits and caching policies of federal APIs.
-- For government orgs, validate data handling against your security policies and any FedRAMP or agency-specific requirements.
-- Prefer Data Cloud or MuleSoft for production-scale integrations.
+- Store the SAM.gov API key securely (Named Credential, External Credential, or secure middleware).
+- For Data Cloud, use least-privilege Connected App scopes.
+- Respect SAM.gov daily rate limits and the 1-year date-range restriction.
+- For government orgs, validate data handling against FedRAMP and agency policies.
+- Prefer Data Cloud for production-scale federal data.
 
 ## Next Steps
 
-- Implement `PipelineScoutService.refreshScores()` to recalculate AI Relevancy Scores after sync.
-- Create Flows or Apex triggers that call scoring after new Pipeline Candidates are inserted.
+- Implement a SAM.gov-specific callout or middleware transformation.
+- Create the Data Cloud Data Stream and DMO.
+- Configure CRM sync to `Pipeline_Candidate__c`.
+- Enhance scoring logic to use past-performance and strategic objective data.
 - Expose scoring and brief-generation methods as Agentforce actions.
-- Secure the Ingestion API with a Connected App and appropriate permission sets.
 
-See also `docs/architecture.md` and `docs/data-model.md`.
+See also `docs/architecture.md`, `docs/data-model.md`, and `docs/diagrams.md`.
