@@ -16,22 +16,28 @@ flowchart TD
     end
 
     subgraph Salesforce["Salesforce Platform"]
-        DataCloud[Data Cloud / External Data]
-        CustomObjects[Custom Objects<br/>Solicitation, Award, Contract Vehicle,<br/>Agency Hierarchy, Gov Contact, Spark, etc.]
+        IngestionAPI[Ingestion API<br/>Apex REST]
+        Callouts[Apex Callouts]
+        DataCloud[Data Cloud]
+        CustomObjects[Custom Objects<br/>Pipeline Candidate, Solicitation,<br/>Award, Gov Contact, etc.]
         Standard[Standard Objects<br/>Opportunity, Account, Contact]
         Flows[Flows & Platform Events]
-        Apex[Apex Actions & Scoring]
-        Prompt[Prompt Templates]
+        Apex[Apex Scoring & Services]
+        Logger[Integration Logger]
         Agents[Agentforce Agents<br/>Pipeline Scout<br/>Opportunity Intelligence<br/>Research & Relationship]
-        Lightning[Lightning App & Pages<br/>FlexCards / LWCs]
+        Lightning[Lightning App & LWC]
     end
 
+    External -->|Push| IngestionAPI
+    External -->|Pull| Callouts
     External --> DataCloud
+    IngestionAPI --> CustomObjects
+    Callouts --> CustomObjects
     DataCloud --> CustomObjects
     CustomObjects --> Standard
-    Agents --> Flows
+    CustomObjects --> Apex
+    Apex --> Logger
     Agents --> Apex
-    Agents --> Prompt
     Agents --> Lightning
     Standard --> Agents
 ```
@@ -40,43 +46,39 @@ flowchart TD
 
 | Agent | Purpose | Key Topics / Actions |
 |-------|---------|----------------------|
-| **Pipeline Scout** | Score and recommend best-fit recompetes, solicitations, and task orders based on past performance & strategic objectives | Score Opportunity, Create Spark, Filter by NAICS/PSC/Vehicle, Alert on high-score leads |
-| **Opportunity Intelligence** | Generate AI-authored briefs on Opportunity / Award / Contract Vehicle records | Generate Brief, Analyze Incumbent, Identify Whitespace, Prioritize Pursuit, Summarize Documents |
-| **Research & Relationship** | Market analysis, competitor intelligence, partner matchmaking, contact & org chart insights | Find Key Decision Makers, Build Call Plan, Competitive Spend Analysis, Teaming Recommendations |
-
-Agents run with least-privilege agent users (or user context where appropriate), use Atlas Reasoning Engine, RAG over Data Cloud + attached documents, and require human confirmation for record updates.
+| **Pipeline Scout** | Score and recommend best-fit Pipeline Candidates | Score candidates, Filter by NAICS/agency, Alert on high-score leads, Convert to Opportunity |
+| **Opportunity Intelligence** | Generate AI-authored briefs | Generate Brief, Analyze Incumbent, Identify Whitespace, Prioritize Pursuit |
+| **Research & Relationship** | Market analysis and contacts | Find Key Decision Makers, Build Call Plan, Competitive Analysis |
 
 ## Data Model (High-Level)
 
-- **Opportunity** (extended): AI_Relevancy_Score__c, Strategic_Fit__c, Incumbent__c, Pursuit_Priority__c, AI_Brief_Summary__c, NAICS/PSC tags
-- **Spark__c**: Qualified lead before Opportunity conversion
+- **Pipeline_Candidate__c**: AI-qualified candidate (recompete, solicitation, task order) with External_Id__c for upserts
+- **Opportunity** (extended): AI_Relevancy_Score__c, Strategic_Fit__c, Incumbent__c, Pursuit_Priority__c, AI_Brief_Summary__c, NAICS_Tags__c
 - **Solicitation__c**, **Award__c**, **Contract_Vehicle__c**
-- **Agency_Hierarchy__c** / **Government_Contact__c**: Org charts and decision makers
+- **Agency_Hierarchy__c** / **Government_Contact__c**
 - **Past_Performance_Profile__c**, **Strategic_Objective__c**
-- Junctions for partners, documents, notices
+- **Integration_Log__c**: Structured logging for integrations and scoring
 
 See [data-model.md](data-model.md) for field-level details.
 
 ## Integration Patterns
 
-- Scheduled Apex / Platform Events / MuleSoft for ingesting federal data
-- Data Cloud for harmonized external + Salesforce data used by agents
-- Prompt Templates + Generative AI for briefs and summaries
-- Lightning Web Components / FlexCards for scored lists, org charts, and embedded Agentforce panels
+- **Ingestion API** (`PipelineCandidateIngestionService`): Push model for external systems / MuleSoft
+- **Apex Callouts** (`PipelineScoutCalloutService`): Pull model using Named Credentials
+- **Data Cloud** or **MuleSoft** for higher-volume or complex scenarios
+- All paths log via `IntegrationLogger` to `Integration_Log__c` and trigger scoring
 
 ## Security & Compliance
 
 - Designed for Government Cloud / FedRAMP considerations
 - Field-level security, sharing rules, and agent user permissions
-- Audit trail on AI-generated actions
+- Audit trail via Integration Logs and Salesforce audit features
 - No model training on sensitive customer or government data
 
 ## UI Pattern
 
-Standard Lightning console layout with:
-- Persistent Agentforce panel (right sidebar)
-- Custom app navigation: Pipeline | Opportunities | Awards | Contacts & Org Charts | Research
-- Personalized views by business unit / program
-- One-click “Add as Spark” / “Convert to Opportunity”
+- Custom Lightning App: Nexsus GovSearch
+- LWC components: `pipelineCandidateList` (dashboard with summary cards), `opportunityAiBriefCard`
+- Agentforce panel on record pages
 
-Mockups of the key pages are in [mockups.md](mockups.md).
+Mockups are described in [mockups.md](mockups.md).
