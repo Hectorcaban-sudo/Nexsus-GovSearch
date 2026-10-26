@@ -42,39 +42,48 @@
    sf org open
    ```
 
-## Agentforce Setup (Post-Deploy)
+## Post-Deploy Configuration
 
-1. In Setup → Agentforce Studio / Agent Builder, create or import the three agents:
+1. Assign the **Nexsus GovSearch User** permission set.
+2. Open the **Nexsus GovSearch** Lightning App.
+3. Add the `pipelineCandidateList` LWC to a Home or App page.
+4. Add the `opportunityAiBriefCard` LWC to Opportunity record pages.
+5. (Optional) Create a Named Credential named `SamGov` for the callout service.
+6. (Optional) Create a Connected App to secure the Ingestion API.
+
+## Agentforce Setup
+
+1. In Setup → Agentforce Studio / Agent Builder, create the three agents:
    - Pipeline Scout
    - Opportunity Intelligence
    - Research & Relationship
-2. Configure topics, actions (Apex, Flows, Prompt Templates), and grounding data sources.
-3. Assign agent users with appropriate permission sets.
-4. Enable the Agentforce panel on Opportunity, Award, and Contract Vehicle record pages.
-5. Create the custom Lightning App “Nexsus GovSearch” and add navigation items.
+2. Configure topics and expose Apex actions (`PipelineScoutService`, `OpportunityIntelligenceService`).
+3. Ground agents on Salesforce records and/or Data Cloud.
+4. Enable the Agentforce panel on relevant record pages.
+
+## Integration Setup
+
+- **Ingestion API**: Available at `/services/apexrest/nexsus/pipeline-candidates`. See [external-data-sources.md](external-data-sources.md).
+- **Callouts**: Invoke `PipelineScoutCalloutService.syncAndScore()` from a Schedulable or button.
+- All integration activity is logged to `Integration_Log__c`.
 
 ## Packaging (Optional Unlocked Package)
-
-Update `sfdx-project.json` packageAliases after creating the package:
 
 ```bash
 sf package create --name "Nexsus GovSearch" --type Unlocked --path force-app
 sf package version create --package "Nexsus GovSearch" --installation-key YourKey --wait 10
 ```
 
-Then install in target orgs with `sf package install`.
-
 ## Production Considerations
 
-- Use a packaging org or unlocked package for controlled releases.
-- Configure Named Credentials / External Services for SAM.gov, USAspending, etc.
-- Set up scheduled Flows or Apex for data refresh.
-- Apply Government Cloud security settings and review Agentforce compliance notes.
-- Test scoring logic and brief generation with sample past-performance data.
+- Configure Named Credentials / Connected Apps for external systems.
+- Set up scheduled jobs for callout-based sync if desired.
+- Apply Government Cloud security settings.
+- Review Agentforce compliance notes and audit Integration Logs.
 
 ## Troubleshooting
 
+- Check `Integration_Log__c` for callout, ingestion, and scoring errors.
 - Ensure source API version in `sfdx-project.json` matches your org.
-- Check agent user permissions if agents cannot query records.
-- Review Agentforce audit logs for failed actions.
-- Use `sf project deploy report` and VS Code Problems panel for metadata errors.
+- Verify agent user permissions.
+- Use `sf project deploy report` for metadata issues.
