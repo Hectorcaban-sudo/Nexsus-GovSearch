@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Top AI-Scored Opportunities" icon-name="custom:custom63">
+        <template if:true={opportunities}>
+            <ul class="slds-list_dotted">
+                <template for:each={opportunities} for:item="opp">
+                    <li key={opp.Id}>{opp.Name}</li>
+                </template>
+            </ul>
+        </template>
+        <template if:true={error}>
+            <p class="slds-text-color_error">Unable to load opportunities.</p>
+        </template>
+    </lightning-card>
+</template>
