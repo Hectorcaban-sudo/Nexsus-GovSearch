@@ -1,0 +1,16 @@
+<template>
+    <lightning-card title="AI Opportunity Brief" icon-name="custom:custom19">
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <p class="slds-text-title_caps">Relevancy Score</p>
+                    <p class="slds-text-heading_medium">{relevancyScore}</p>
+                </div>
+            </div>
+            <div class="slds-m-top_medium">
+                <p class="slds-text-title_caps">Brief Summary</p>
+                <lightning-formatted-rich-text value={briefSummary}></lightning-formatted-rich-text>
+            </div>
+        </div>
+    </lightning-card>
+</template>

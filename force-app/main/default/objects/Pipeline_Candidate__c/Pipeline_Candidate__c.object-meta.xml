@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>AI-qualified pipeline candidate (recompete, solicitation, or task order) that can be converted to an Opportunity.</description>
+    <label>Pipeline Candidate</label>
+    <nameField>
+        <label>Candidate Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Pipeline Candidates</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>
