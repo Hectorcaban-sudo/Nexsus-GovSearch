@@ -21,9 +21,10 @@ It also includes contact intelligence (senior government decision makers, biogra
   - Opportunity Intelligence Agent
   - Research & Relationship Agent
 
-## Architecture Overview
+## Architecture & Diagrams
 
-See [docs/architecture.md](docs/architecture.md) for detailed diagrams and component descriptions.
+- [docs/architecture.md](docs/architecture.md) — High-level architecture overview
+- [docs/diagrams.md](docs/diagrams.md) — Mermaid diagrams for architecture, user workflows, data ingestion, scoring, and Agentforce interactions
 
 High-level components:
 - Custom Lightning App (Nexsus GovSearch)
@@ -40,6 +41,7 @@ Nexsus-GovSearch/
 │   └── project-scratch-def.json
 ├── docs/
 │   ├── architecture.md
+│   ├── diagrams.md
 │   ├── deployment.md
 │   ├── data-model.md
 │   ├── external-data-sources.md
@@ -89,7 +91,7 @@ See [docs/deployment.md](docs/deployment.md) for full instructions.
 
 ## Status
 
-This repository contains the Salesforce DX project with custom objects, fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), and Agentforce sketches.
+This repository contains the Salesforce DX project with custom objects, fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), Agentforce sketches, and architecture diagrams.
 
 ## License
 
