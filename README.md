@@ -10,12 +10,12 @@ It also includes contact intelligence (senior government decision makers, biogra
 
 ## Key Features
 
-- **AI-Optimized Pipeline**: Continuously scores and surfaces highly relevant leads based on your past performance, NAICS/PSC alignment, strategic objectives, contract vehicle access, and historical win patterns.
-- **AI-Authored Briefs**: Agentforce digital assistant generates expert briefs on Opportunities, Awards, and Contract Vehicles covering incumbent analysis, competitive whitespace, prioritization rationale, risks, and recommended next actions.
+- **AI-Optimized Pipeline**: Continuously scores and surfaces highly relevant Pipeline Candidates based on past performance, NAICS/PSC alignment, strategic objectives, contract vehicle access, and historical win patterns.
+- **AI-Authored Briefs**: Agentforce digital assistant generates expert briefs on Opportunities, Awards, and Contract Vehicles.
 - **Consolidated Federal Data**: Single view aggregating SAM.gov, USAspending, FedConnect, PIEE, agency forecasts, and proprietary contact/past-performance data.
+- **Flexible Ingestion**: Support for both pull (Apex callouts) and push (Ingestion API) patterns.
 - **Contact & Relationship Intelligence**: Org chart hierarchies, decision-maker bios, influence ratings, and AI-suggested call/account plans.
-- **Research & Analysis Console**: Market spend trends, competitor intelligence, partner/teaming matchmaking, capability tagging, and saved searches.
-- **CRM-Native**: Fully embedded in Salesforce Lightning. Qualified Pipeline Candidates convert to Opportunities with automatic field maintenance. Works with standard Opportunity, Account, Contact objects plus custom extensions.
+- **CRM-Native**: Fully embedded in Salesforce Lightning. Qualified Pipeline Candidates convert to Opportunities.
 - **Agentforce Agents**:
   - Pipeline Scout Agent
   - Opportunity Intelligence Agent
@@ -27,14 +27,12 @@ See [docs/architecture.md](docs/architecture.md) for detailed diagrams and compo
 
 High-level components:
 - Custom Lightning App (Nexsus GovSearch)
-- Agentforce Employee Agents grounded in Data Cloud / Salesforce data + external sources
-- Flows + Apex actions + Prompt Templates for scoring, enrichment, and brief generation
-- Custom objects for Solicitation, Award, Contract Vehicle, Agency Hierarchy, Government Contact, Past Performance Profile, Strategic Objective, Pipeline Candidate
-- Integrations via Apex / MuleSoft / Platform Events / Data Cloud for federal data sources
+- Agentforce Employee Agents
+- Flows + Apex actions + Prompt Templates
+- Custom objects including Pipeline_Candidate__c, Solicitation__c, Award__c, Government_Contact__c, Integration_Log__c
+- Integrations via Apex Callouts, Ingestion API, MuleSoft, Platform Events, or Data Cloud
 
 ## Project Structure
-
-This is a standard Salesforce DX project for Visual Studio Code (with Salesforce Extension Pack).
 
 ```
 Nexsus-GovSearch/
@@ -44,11 +42,13 @@ Nexsus-GovSearch/
 │   ├── architecture.md
 │   ├── deployment.md
 │   ├── data-model.md
+│   ├── external-data-sources.md
 │   ├── sample-data.md
 │   └── lwc-stubs.md
 ├── force-app/
 │   └── main/
 │       └── default/
+│           ├── applications/
 │           ├── classes/
 │           ├── lwc/
 │           ├── objects/
@@ -62,29 +62,34 @@ Nexsus-GovSearch/
 
 ## Getting Started (VS Code)
 
-1. Install the [Salesforce Extension Pack](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode) in Visual Studio Code.
-2. Clone this repository:
+1. Install the [Salesforce Extension Pack](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode).
+2. Clone the repository:
    ```bash
    git clone https://github.com/Hectorcaban-sudo/Nexsus-GovSearch.git
    cd Nexsus-GovSearch
    ```
 3. Open the folder in VS Code.
-4. Authorize a Dev Hub (or use a scratch org definition).
+4. Authorize a Dev Hub.
 5. Create a scratch org:
    ```bash
    sf org create scratch --definition-file config/project-scratch-def.json --alias nexsus-govsearch --duration-days 7 --set-default
    ```
-6. Push source:
+6. Deploy:
    ```bash
    sf project deploy start
    ```
-   (or use the VS Code “Deploy Source to Org” command)
 
-See [docs/deployment.md](docs/deployment.md) for full deployment, packaging, and Agentforce setup instructions.
+See [docs/deployment.md](docs/deployment.md) for full instructions.
+
+## Integration Options
+
+- **Ingestion API**: `POST /services/apexrest/nexsus/pipeline-candidates` (see [docs/external-data-sources.md](docs/external-data-sources.md))
+- **Apex Callouts**: `PipelineScoutCalloutService.syncAndScore()`
+- Logging available via `Integration_Log__c`
 
 ## Status
 
-This repository contains the Salesforce DX project scaffolding, architecture documentation, custom objects (including Pipeline_Candidate__c), fields, layouts, permission sets, pure LWC stubs, and Agentforce sketches.
+This repository contains the Salesforce DX project with custom objects, fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), and Agentforce sketches.
 
 ## License
 
