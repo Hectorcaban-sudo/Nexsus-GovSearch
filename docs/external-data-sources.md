@@ -6,11 +6,11 @@ This guide covers setting up external federal data sources for Nexsus GovSearch,
 
 | Source | Primary Data | Recommended Integration |
 |--------|--------------|-------------------------|
-| SAM.gov | Opportunities, Solicitations, Notices | Apex callouts, MuleSoft, or Data Cloud |
-| USAspending | Awards, Obligated Spend, Vendors | Apex callouts or scheduled sync |
-| FedConnect | Task Orders, RFPs | MuleSoft or custom Apex |
+| SAM.gov | Opportunities, Solicitations, Notices | Apex callouts, Ingestion API, MuleSoft, or Data Cloud |
+| USAspending | Awards, Obligated Spend, Vendors | Apex callouts, Ingestion API, or scheduled sync |
+| FedConnect | Task Orders, RFPs | MuleSoft or Ingestion API |
 | PIEE | Invoices, Contract Data | MuleSoft preferred |
-| Agency Forecasts | Planned procurements | Manual or scheduled import |
+| Agency Forecasts | Planned procurements | Manual, Ingestion API, or scheduled import |
 | Proprietary Contacts | Decision makers, org charts | Data Cloud or managed package |
 
 ## Recommended Architecture
@@ -20,18 +20,66 @@ This guide covers setting up external federal data sources for Nexsus GovSearch,
    - Use Data Cloud to unify and ground Agentforce agents.  
    - Sync key records into Salesforce custom objects via Data Streams or calculated insights.
 
-2. **MuleSoft Anypoint Platform**  
+2. **Ingestion API (Push from external systems)**  
+   - Apex REST endpoint: `/services/apexrest/nexsus/pipeline-candidates`  
+   - External systems, MuleSoft, or middleware POST Pipeline Candidate payloads.  
+   - Supports single or bulk records, upserts via `External_Id__c`, and automatically triggers scoring.  
+   - Ideal when the source system can push data or when you want to avoid Salesforce-initiated callouts.
+
+3. **MuleSoft Anypoint Platform**  
    - Build APIs that normalize SAM.gov / USAspending data.  
-   - Push enriched records into Salesforce via Composite API or Bulk API.  
+   - Push enriched records into Salesforce via the Ingestion API, Composite API, or Bulk API.  
    - Handle authentication, rate limits, and transformation.
 
-3. **Apex Callouts + Platform Events**  
+4. **Apex Callouts + Platform Events**  
    - Suitable for lighter volumes or proof-of-concept.  
    - Use Named Credentials for authentication.  
    - Publish Platform Events for real-time updates to Pipeline Candidates.
 
-4. **Scheduled Apex / Batch**  
+5. **Scheduled Apex / Batch**  
    - Nightly jobs that call external APIs and upsert Pipeline_Candidate__c, Solicitation__c, and Award__c records.
+
+## Ingestion API Usage
+
+**Endpoint**: `POST /services/apexrest/nexsus/pipeline-candidates`
+
+**Authentication**: Standard Salesforce OAuth (Connected App) or Named Principal.
+
+**Example Request Body**:
+```json
+{
+  "candidates": [
+    {
+      "externalId": "SAM-123456",
+      "name": "Army IT Modernization Recompete",
+      "agency": "Department of the Army",
+      "candidateType": "Recompete",
+      "estimatedValue": 249000000,
+      "naics": "541512",
+      "dueDate": "2026-12-15",
+      "sourceSystem": "SAM.gov",
+      "incumbent": "Lockheed Martin",
+      "status": "New"
+    }
+  ]
+}
+```
+
+**Example Response** (200 or 207):
+```json
+{
+  "success": true,
+  "totalReceived": 1,
+  "successCount": 1,
+  "errorCount": 0,
+  "errors": [],
+  "processedExternalIds": ["SAM-123456"]
+}
+```
+
+- Partial success returns HTTP 207 with details in the `errors` array.
+- All activity is logged to `Integration_Log__c`.
+- Successful records are automatically scored via `PipelineScoutService.refreshScoresFor`.
 
 ## Field Mapping Examples
 
@@ -45,7 +93,7 @@ This guide covers setting up external federal data sources for Nexsus GovSearch,
 | estimatedValue or awardAmount | Estimated_Value__c | |
 | naicsCode | NAICS__c | |
 | responseDeadline | Due_Date__c | |
-| noticeId or solicitationNumber | Source_System__c + external ID | Store external ID for upsert |
+| noticeId or solicitationNumber | External_Id__c | Required for upsert |
 | incumbent / awardee | Incumbent__c | |
 
 ### USAspending Award → Award__c
@@ -69,16 +117,18 @@ Map senior decision makers into `Government_Contact__c` with:
 
 ## Implementation Steps
 
-1. **Create Named Credentials** for each external system.
+1. **Create Named Credentials** for each external system (for callout pattern).
 2. **Define External IDs** on Pipeline_Candidate__c, Solicitation__c, and Award__c for safe upserts.
-3. **Build transformation logic** (MuleSoft DataWeave or Apex) that maps external schemas to the fields above.
-4. **Schedule or event-drive** the sync.
-5. **Trigger AI scoring** (Pipeline Scout Agent or Apex) after new records are inserted.
-6. **Ground Agentforce** agents in the synced Salesforce records and/or Data Cloud.
+3. **Choose push (Ingestion API) or pull (Callout)** based on source system capabilities.
+4. **Build transformation logic** (MuleSoft DataWeave or Apex) that maps external schemas to the fields above.
+5. **Schedule or event-drive** the sync.
+6. **Trigger AI scoring** (Pipeline Scout Agent or Apex) after new records are inserted.
+7. **Ground Agentforce** agents in the synced Salesforce records and/or Data Cloud.
 
 ## Security & Compliance Notes
 
 - Use Named Credentials and External Credentials; never hard-code keys.
+- For the Ingestion API, use a Connected App with least-privilege OAuth scopes.
 - Respect rate limits and caching policies of federal APIs.
 - For government orgs, validate data handling against your security policies and any FedRAMP or agency-specific requirements.
 - Prefer Data Cloud or MuleSoft for production-scale integrations.
@@ -88,5 +138,6 @@ Map senior decision makers into `Government_Contact__c` with:
 - Implement `PipelineScoutService.refreshScores()` to recalculate AI Relevancy Scores after sync.
 - Create Flows or Apex triggers that call scoring after new Pipeline Candidates are inserted.
 - Expose scoring and brief-generation methods as Agentforce actions.
+- Secure the Ingestion API with a Connected App and appropriate permission sets.
 
 See also `docs/architecture.md` and `docs/data-model.md`.
