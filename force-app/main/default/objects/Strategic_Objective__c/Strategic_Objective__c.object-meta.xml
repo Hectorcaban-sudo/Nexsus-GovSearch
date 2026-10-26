@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Strategic business unit or program objective that influences opportunity scoring.</description>
+    <label>Strategic Objective</label>
+    <nameField>
+        <label>Objective Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Strategic Objectives</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Company past performance profile used for AI relevancy scoring.</description>
+    <label>Past Performance Profile</label>
+    <nameField>
+        <label>Profile Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Past Performance Profiles</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>
