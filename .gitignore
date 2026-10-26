@@ -1,0 +1,35 @@
+# Salesforce DX
+.sfdx/
+.sf/
+.localdevserver/
+deploy-options.json
+
+# LWC VSCode autocomplete
+**/lwc/jsconfig.json
+
+# LWC Jest coverage reports
+coverage/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+
+# Scratch org
+.sfdx/orgs/
+.sfdx/tools/
+.sfdx/typings/
+.sfdx/indexes/
+
+# Package directories
+node_modules/
+
+# Temp
+*.tmp
+*.temp
