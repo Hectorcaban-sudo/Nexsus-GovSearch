@@ -19,10 +19,8 @@ public with sharing class AdminConfigController {
     public static String loadSampleDatasets() {
         assertAdminAccess();
         try {
-            // Built-in load still creates Pipeline Candidates
             List<Pipeline_Candidate__c> toInsert = generateSampleCandidates(20);
             String msg = insertCandidates(toInsert);
-            // Also ensure a Company Profile exists
             if ([SELECT COUNT() FROM Company_Profile__c] == 0) {
                 Company_Profile__c p = new Company_Profile__c(
                     Name = 'Nexsus Sample Company',
@@ -52,7 +50,6 @@ public with sharing class AdminConfigController {
         try {
             Object parsed = JSON.deserializeUntyped(jsonContent);
             if (parsed instanceof List<Object>) {
-                // Legacy: array of Pipeline Candidates only
                 return loadCandidateList((List<Object>) parsed);
             } else if (parsed instanceof Map<String, Object>) {
                 return loadMultiObject((Map<String, Object>) parsed);
@@ -65,10 +62,8 @@ public with sharing class AdminConfigController {
     }
 
     private static String loadMultiObject(Map<String, Object> data) {
-        Integer total = 0;
         List<String> messages = new List<String>();
 
-        // Company Profile (singleton)
         if (data.containsKey('Company_Profile__c')) {
             List<Object> rows = (List<Object>) data.get('Company_Profile__c');
             if (!rows.isEmpty() && [SELECT COUNT() FROM Company_Profile__c] == 0) {
@@ -82,18 +77,15 @@ public with sharing class AdminConfigController {
                 p.Vehicles_Held__c = (String) m.get('Vehicles_Held__c');
                 p.Target_Agencies__c = (String) m.get('Target_Agencies__c');
                 insert p;
-                total++;
                 messages.add('Company Profile');
             }
         }
 
-        // Pipeline Candidates
         if (data.containsKey('Pipeline_Candidate__c')) {
             String r = loadCandidateList((List<Object>) data.get('Pipeline_Candidate__c'));
             messages.add(r);
         }
 
-        // Other objects (insert with Name only or simple fields)
         Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
         for (String apiName : data.keySet()) {
             if (apiName == 'Company_Profile__c' || apiName == 'Pipeline_Candidate__c') continue;
@@ -114,7 +106,6 @@ public with sharing class AdminConfigController {
                 Database.SaveResult[] results = Database.insert(toInsert, false);
                 Integer ok = 0;
                 for (Database.SaveResult sr : results) if (sr.isSuccess()) ok++;
-                total += ok;
                 messages.add(apiName + ': ' + ok);
             }
         }
@@ -140,12 +131,16 @@ public with sharing class AdminConfigController {
             if (m.get('Due_Date__c') != null) {
                 c.Due_Date__c = Date.valueOf((String) m.get('Due_Date__c'));
             }
-            c.Source_System__c = (String) m.get('Source_System__c');
-            if (String.isBlank(c.Source_System__c)) c.Source_System__c = 'Sample';
-            c.Status__c = (String) m.get('Status__c');
-            if (String.isBlank(c.Status__c)) c.Status__c = 'New';
-            c.Triage_Status__c = (String) m.get('Triage_Status__c');
-            if (String.isBlank(c.Triage_Status__c)) c.Triage_Status__c = 'New';
+            // Only set Source_System__c if the field exists in the org
+            if (hasField('Pipeline_Candidate__c', 'Source_System__c')) {
+                c.put('Source_System__c', m.get('Source_System__c') != null ? (String) m.get('Source_System__c') : 'Sample');
+            }
+            if (hasField('Pipeline_Candidate__c', 'Status__c') && m.get('Status__c') != null) {
+                c.put('Status__c', (String) m.get('Status__c'));
+            }
+            if (hasField('Pipeline_Candidate__c', 'Triage_Status__c') && m.get('Triage_Status__c') != null) {
+                c.put('Triage_Status__c', (String) m.get('Triage_Status__c'));
+            }
             toInsert.add(c);
         }
         return insertCandidates(toInsert);
@@ -155,11 +150,13 @@ public with sharing class AdminConfigController {
     public static String clearSampleData() {
         assertAdminAccess();
         try {
-            List<Pipeline_Candidate__c> samples = [
-                SELECT Id FROM Pipeline_Candidate__c
-                WHERE Source_System__c = 'Sample'
-                LIMIT 200
-            ];
+            List<Pipeline_Candidate__c> samples;
+            if (hasField('Pipeline_Candidate__c', 'Source_System__c')) {
+                samples = Database.query('SELECT Id FROM Pipeline_Candidate__c WHERE Source_System__c = \'Sample\' LIMIT 200');
+            } else {
+                // Fallback: match by Name prefix
+                samples = [SELECT Id FROM Pipeline_Candidate__c WHERE Name LIKE 'Sample%' LIMIT 200];
+            }
             delete samples;
             String msg = 'Cleared ' + samples.size() + ' sample Pipeline Candidates.';
             IntegrationLogger.info(SOURCE, msg);
@@ -181,13 +178,24 @@ public with sharing class AdminConfigController {
         Database.SaveResult[] results = Database.insert(toInsert, false);
         Integer success = 0;
         Integer errors = 0;
+        String firstError = '';
         for (Database.SaveResult sr : results) {
             if (sr.isSuccess()) success++;
-            else errors++;
+            else {
+                errors++;
+                if (String.isBlank(firstError) && sr.getErrors().size() > 0) {
+                    firstError = sr.getErrors()[0].getMessage();
+                }
+            }
         }
         String msg = 'Loaded ' + success + ' Pipeline Candidates. Errors: ' + errors;
+        if (String.isNotBlank(firstError)) msg += ' (First: ' + firstError + ')';
         IntegrationLogger.info(SOURCE, msg);
         return msg;
+    }
+
+    private static Boolean hasField(String objectName, String fieldName) {
+        return Schema.getGlobalDescribe().get(objectName).getDescribe().fields.getMap().containsKey(fieldName);
     }
 
     private static void assertAdminAccess() {
@@ -210,9 +218,15 @@ public with sharing class AdminConfigController {
             c.NAICS__c = naics[Math.mod(i, naics.size())];
             c.Estimated_Value__c = 500000 + (i * 250000);
             c.Due_Date__c = Date.today().addDays(30 + Math.mod(i, 120));
-            c.Source_System__c = 'Sample';
-            c.Status__c = 'New';
-            c.Triage_Status__c = 'New';
+            if (hasField('Pipeline_Candidate__c', 'Source_System__c')) {
+                c.put('Source_System__c', 'Sample');
+            }
+            if (hasField('Pipeline_Candidate__c', 'Status__c')) {
+                c.put('Status__c', 'New');
+            }
+            if (hasField('Pipeline_Candidate__c', 'Triage_Status__c')) {
+                c.put('Triage_Status__c', 'New');
+            }
             records.add(c);
         }
         return records;
