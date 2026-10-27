@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Weighted_Value__c</fullName>
+    <label>Weighted Value</label>
+    <type>Currency</type>
+    <precision>18</precision>
+    <scale>2</scale>
+    <formula>Amount * IF(ISBLANK(pWin__c), 0, pWin__c) * IF(ISBLANK(pGo__c), 0, pGo__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <description>TCV × pWin × pGo</description>
+</CustomField>

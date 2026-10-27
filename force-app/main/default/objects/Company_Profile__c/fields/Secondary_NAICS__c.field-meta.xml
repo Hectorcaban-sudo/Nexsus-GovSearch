@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Secondary_NAICS__c</fullName>
+    <label>Secondary NAICS</label>
+    <type>Text</type>
+    <length>255</length>
+    <description>Additional NAICS codes the company pursues.</description>
+</CustomField>

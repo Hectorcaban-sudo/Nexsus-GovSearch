@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Vehicles_Held__c</fullName>
+    <label>Vehicles Held</label>
+    <type>TextArea</type>
+    <description>Contract vehicles the company holds (GSA MAS, GWACs, IDIQs).</description>
+</CustomField>

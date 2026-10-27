@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recommendation__c</fullName>
+    <label>Recommendation</label>
+    <type>Formula</type>
+    <formula>IF(Weighted_Score__c &gt;= 70, "Bid", IF(Weighted_Score__c &gt;= 50, "Conditional Bid", "No-Bid"))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+</CustomField>

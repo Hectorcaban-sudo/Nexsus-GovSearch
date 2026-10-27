@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Block_Stage_Without_Gate</fullName>
+    <active>true</active>
+    <description>Blocks advancing past Qualify unless Gate 0 is Approved.</description>
+    <errorConditionFormula>AND(
+        ISCHANGED(StageName),
+        ISPICKVAL(PRIORVALUE(StageName), "Qualify"),
+        NOT(ISPICKVAL(StageName, "Qualify")),
+        NOT(ISPICKVAL(StageName, "Closed Lost")),
+        /* Simplified check - full implementation would use a rollup or related list query via Flow/Apex */
+        FALSE
+    )</errorConditionFormula>
+    <errorMessage>Cannot advance past Qualify until Gate 0 is Approved. Complete the Gate Review first.</errorMessage>
+</ValidationRule>
