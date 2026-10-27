@@ -14,8 +14,9 @@ The solution is being built against the **GovCon Capture & Market Intelligence o
 
 - Full gap analysis: [docs/requirements-gap-analysis.md](docs/requirements-gap-analysis.md)
 - Updated data model: [docs/data-model.md](docs/data-model.md)
+- AI layer explanation: [docs/ai-layer.md](docs/ai-layer.md)
 
-**Current status**: Strong foundation for the intelligence and AI layer. MVP capture CRM objects (Company Profile, Fit Rules, Gates, Capture Plan, Bid Scorecard, Saved Search, Teaming, Call Reports, Notice Versions, Forecasts) have been scaffolded.
+**Current status**: Strong foundation for the intelligence and AI layer. MVP capture CRM objects (Company Profile, Fit Rules, Gates, Capture Plan, Bid Scorecard, Saved Search, Teaming, Call Reports, Notice Versions, Forecasts) have been scaffolded with triage, scoring, and promotion Flow.
 
 ## Key Features
 
@@ -35,6 +36,8 @@ The solution is being built against the **GovCon Capture & Market Intelligence o
 - [docs/architecture.md](docs/architecture.md) — High-level architecture overview
 - [docs/diagrams.md](docs/diagrams.md) — Workflow and architecture diagrams (JPG + Mermaid)
 - [docs/requirements-gap-analysis.md](docs/requirements-gap-analysis.md) — Gap analysis vs. requirements document
+- [docs/ai-layer.md](docs/ai-layer.md) — AI scoring and Agentforce implementation
+- [docs/deployment.md](docs/deployment.md) — Full deployment and setup instructions
 
 High-level components:
 - Custom Lightning App (Nexsus GovSearch)
@@ -56,6 +59,8 @@ Nexsus-GovSearch/
 │   ├── data-model.md
 │   ├── external-data-sources.md
 │   ├── requirements-gap-analysis.md
+│   ├── ai-layer.md
+│   ├── mvp-implementation-notes.md
 │   ├── sample-data.md
 │   └── lwc-stubs.md
 ├── force-app/
@@ -102,7 +107,7 @@ See [docs/deployment.md](docs/deployment.md) for full instructions.
 
 ## Status
 
-This repository contains the Salesforce DX project with custom objects (including newly scaffolded MVP objects), fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), Agentforce sketches, architecture diagrams, and a full requirements gap analysis.
+This repository contains the Salesforce DX project with custom objects (including newly scaffolded MVP objects), fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), Agentforce sketches, architecture diagrams, a full requirements gap analysis, and detailed AI layer documentation.
 
 ## License
 
