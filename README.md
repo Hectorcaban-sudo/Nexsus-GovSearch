@@ -8,12 +8,21 @@ On Opportunity, Contract Vehicle, and Award records, the digital assistant (Agen
 
 It also includes contact intelligence (senior government decision makers, biographical details, and org chart views of agency/office hierarchies) to help Growth teams build the right relationships, plus streamlined research and analysis tools for partner identification, market/competitive analysis, and account planning.
 
+## Requirements Alignment
+
+The solution is being built against the **GovCon Capture & Market Intelligence on Salesforce — Requirements Document**.
+
+- Full gap analysis: [docs/requirements-gap-analysis.md](docs/requirements-gap-analysis.md)
+- Updated data model: [docs/data-model.md](docs/data-model.md)
+
+**Current status**: Strong foundation for the intelligence and AI layer. MVP capture CRM objects (Company Profile, Fit Rules, Gates, Capture Plan, Bid Scorecard, Saved Search, Teaming, Call Reports, Notice Versions, Forecasts) have been scaffolded.
+
 ## Key Features
 
 - **AI-Optimized Pipeline**: Continuously scores and surfaces highly relevant Pipeline Candidates based on past performance, NAICS/PSC alignment, strategic objectives, contract vehicle access, and historical win patterns.
 - **AI-Authored Briefs**: Agentforce digital assistant generates expert briefs on Opportunities, Awards, and Contract Vehicles.
 - **Consolidated Federal Data**: Single view aggregating SAM.gov, USAspending, FedConnect, PIEE, agency forecasts, and proprietary contact/past-performance data.
-- **Flexible Ingestion**: Support for both pull (Apex callouts) and push (Ingestion API) patterns.
+- **Flexible Ingestion**: Support for both pull (Apex callouts) and push (Ingestion API / Data Cloud) patterns.
 - **Contact & Relationship Intelligence**: Org chart hierarchies, decision-maker bios, influence ratings, and AI-suggested call/account plans.
 - **CRM-Native**: Fully embedded in Salesforce Lightning. Qualified Pipeline Candidates convert to Opportunities.
 - **Agentforce Agents**:
@@ -24,13 +33,14 @@ It also includes contact intelligence (senior government decision makers, biogra
 ## Architecture & Diagrams
 
 - [docs/architecture.md](docs/architecture.md) — High-level architecture overview
-- [docs/diagrams.md](docs/diagrams.md) — Mermaid diagrams for architecture, user workflows, data ingestion, scoring, and Agentforce interactions
+- [docs/diagrams.md](docs/diagrams.md) — Workflow and architecture diagrams (JPG + Mermaid)
+- [docs/requirements-gap-analysis.md](docs/requirements-gap-analysis.md) — Gap analysis vs. requirements document
 
 High-level components:
 - Custom Lightning App (Nexsus GovSearch)
 - Agentforce Employee Agents
 - Flows + Apex actions + Prompt Templates
-- Custom objects including Pipeline_Candidate__c, Solicitation__c, Award__c, Government_Contact__c, Integration_Log__c
+- Custom objects including Pipeline_Candidate__c, Company_Profile__c, Gate_Review__c, Capture_Plan__c, and supporting MVP objects
 - Integrations via Apex Callouts, Ingestion API, MuleSoft, Platform Events, or Data Cloud
 
 ## Project Structure
@@ -45,6 +55,7 @@ Nexsus-GovSearch/
 │   ├── deployment.md
 │   ├── data-model.md
 │   ├── external-data-sources.md
+│   ├── requirements-gap-analysis.md
 │   ├── sample-data.md
 │   └── lwc-stubs.md
 ├── force-app/
@@ -91,7 +102,7 @@ See [docs/deployment.md](docs/deployment.md) for full instructions.
 
 ## Status
 
-This repository contains the Salesforce DX project with custom objects, fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), Agentforce sketches, and architecture diagrams.
+This repository contains the Salesforce DX project with custom objects (including newly scaffolded MVP objects), fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), Agentforce sketches, architecture diagrams, and a full requirements gap analysis.
 
 ## License
 
