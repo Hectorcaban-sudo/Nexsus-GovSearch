@@ -83,6 +83,38 @@ Data Cloud’s Ingestion API is ideal for high-volume or continuous streaming fr
 - `setAside` / `setAsideCode`
 - `active`
 
+### SAM.gov Ingestion Strategy (Hybrid Approach)
+
+When the SAM.gov API supports filters, a **hybrid strategy** is recommended:
+
+1. **Ingest at the agency (or major sub-agency) level** using stable, high-value filters:
+   - Organization name or code (e.g., Army, DHS, VA)
+   - Rolling date window (`postedFrom` / `postedTo`) — typically 30–90 days
+   - Optional: NAICS codes that match your company’s core capabilities
+   - Optional: set-aside types you pursue
+
+2. **Land the data** in Data Cloud (preferred) or directly in `Pipeline_Candidate__c` with rich attributes (NAICS, set-aside, place of performance, organization hierarchy, etc.).
+
+3. **Apply team-specific filtering downstream** in Salesforce:
+   - List views, reports, and dashboards filtered by team criteria
+   - Pipeline Scout scoring that incorporates each team’s strategic objectives
+   - Sharing rules or criteria-based sharing so teams only see relevant records
+   - Agentforce agents grounded or prompted with team context (e.g., “show me only cybersecurity-related opportunities for the Army team”)
+
+#### Why Hybrid Works Well
+
+- SAM.gov rate limits and the 1-year date-range restriction make very broad queries expensive.
+- Team specializations (cyber, cloud, logistics, etc.) often change; it is easier to adjust scoring and filters in Salesforce than to maintain multiple tightly scoped API jobs.
+- A moderately broad dataset gives Pipeline Scout and Opportunity Intelligence agents more context for scoring and competitive analysis.
+- You can still use tighter API filters for exceptionally high-volume agencies if a single broad pull exceeds practical limits.
+
+#### Example Implementation
+
+- One scheduled job pulls Army opportunities (last 60 days) matching your top NAICS codes.
+- Data lands in Data Cloud → synced to `Pipeline_Candidate__c`.
+- Scoring logic boosts records that match each team’s strategic objectives.
+- BD users and Agentforce agents see only the subset relevant to their team via filters or agent instructions.
+
 ### Data Cloud DMO Field Mapping (SAM.gov → Pipeline Candidate)
 
 | SAM.gov Field | Data Cloud DMO Field | Salesforce CRM Field | Notes |
@@ -132,12 +164,14 @@ Use this when you want to write directly into CRM objects. See previous sections
    - Data Cloud Ingestion API (recommended for scale + Agentforce grounding)
    - Apex Callout (`PipelineScoutCalloutService`)
    - Apex REST Ingestion API
-3. Implement transformation logic that maps SAM.gov fields to the DMO or CRM fields above.
-4. Configure pagination and incremental loads (use `postedFrom`/`postedTo` windows).
-5. Set up Data Cloud-to-CRM sync if using Data Cloud.
-6. Trigger AI scoring after new Pipeline Candidates arrive.
-7. Ground Agentforce agents appropriately.
-8. Monitor rate limits and log failures.
+3. Define your hybrid ingestion scope (agency + date window + optional NAICS).
+4. Implement transformation logic that maps SAM.gov fields to the DMO or CRM fields above.
+5. Configure pagination and incremental loads (use `postedFrom`/`postedTo` windows).
+6. Set up Data Cloud-to-CRM sync if using Data Cloud.
+7. Configure team-specific filters, scoring rules, and sharing.
+8. Trigger AI scoring after new Pipeline Candidates arrive.
+9. Ground Agentforce agents appropriately.
+10. Monitor rate limits and log failures.
 
 ## Security & Compliance Notes
 
@@ -149,7 +183,7 @@ Use this when you want to write directly into CRM objects. See previous sections
 
 ## Next Steps
 
-- Implement a SAM.gov-specific callout or middleware transformation.
+- Implement a SAM.gov-specific callout or middleware transformation using the hybrid strategy.
 - Create the Data Cloud Data Stream and DMO.
 - Configure CRM sync to `Pipeline_Candidate__c`.
 - Enhance scoring logic to use past-performance and strategic objective data.
