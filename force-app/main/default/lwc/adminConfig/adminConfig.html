@@ -20,6 +20,17 @@
                 <lightning-button label="Refresh Scores" variant="neutral" onclick={handleRefreshScores} disabled={isLoading} class="slds-m-left_small"></lightning-button>
             </div>
 
+            <div class="slds-m-bottom_medium">
+                <lightning-file-upload
+                    label="Upload Sample JSON"
+                    name="sampleJson"
+                    accept=".json"
+                    onuploadfinished={handleUploadFinished}
+                    disabled={isLoading}>
+                </lightning-file-upload>
+                <p class="slds-text-body_small slds-m-top_x-small">Upload a JSON file matching docs/sample-datasets.json. Records are created with Source_System__c = Sample.</p>
+            </div>
+
             <template if:true={message}>
                 <div class="slds-notify slds-notify_alert slds-theme_success" role="alert">
                     <h2>{message}</h2>
@@ -35,7 +46,7 @@
             <div class="slds-m-top_large">
                 <h3 class="slds-text-heading_small">Admin Actions</h3>
                 <ul class="slds-list_dotted slds-m-top_small">
-                    <li>Load sample data to verify scoring, triage, and dashboards without external ingestion.</li>
+                    <li>Load 100 built-in sample datasets, or upload your own JSON file.</li>
                     <li>Clear sample data when finished testing.</li>
                     <li>Refresh scores against the current Company Profile and Fit Rules.</li>
                 </ul>
