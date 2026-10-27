@@ -11,6 +11,8 @@
     <label>Nexsus GovSearch</label>
     <navType>Standard</navType>
     <tabs>standard-home</tabs>
+    <tabs>Research_Console</tabs>
+    <tabs>Contacts_Org_Chart</tabs>
     <tabs>standard-Opportunity</tabs>
     <tabs>Pipeline_Candidate__c</tabs>
     <tabs>Solicitation__c</tabs>
