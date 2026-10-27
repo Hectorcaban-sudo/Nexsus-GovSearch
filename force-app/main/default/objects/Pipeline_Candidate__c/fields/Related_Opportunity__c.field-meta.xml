@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Related_Opportunity__c</fullName>
+    <label>Related Opportunity</label>
+    <type>Lookup</type>
+    <referenceTo>Opportunity</referenceTo>
+    <relationshipLabel>Pipeline Candidates</relationshipLabel>
+    <relationshipName>Pipeline_Candidates</relationshipName>
+    <description>Opportunity created when this candidate is promoted.</description>
+</CustomField>
