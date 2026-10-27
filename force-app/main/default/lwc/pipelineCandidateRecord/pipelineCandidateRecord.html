@@ -1,0 +1,56 @@
+<template>
+    <template if:true={record}>
+        <div class="header-bar">
+            <div class="title-block">
+                <div class="eyebrow">Pipeline Candidate</div>
+                <h1 class="record-title">{name}</h1>
+                <div class="meta-row">
+                    <span class="pill">{candidateType}</span>
+                    <span class="pill muted">{agency}</span>
+                    <span class="pill muted">Due {dueDate}</span>
+                </div>
+            </div>
+            <div class={scoreClass}>
+                <div class="score-label">AI Score</div>
+                <div class="score-value">{score}</div>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-label">Estimated Value</div>
+                <div class="card-value">{formattedValue}</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Strategic Fit</div>
+                <div class="card-value">{strategicFit}</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Status</div>
+                <div class="card-value">{status}</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Triage</div>
+                <div class="card-value">{triageStatus}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Score Reasons</h2>
+            <div class="reasons">{reasons}</div>
+        </div>
+
+        <div class="section">
+            <h2>Details</h2>
+            <div class="detail-grid">
+                <div><span class="label">NAICS</span><span>{naics}</span></div>
+                <div><span class="label">Agency</span><span>{agency}</span></div>
+                <div><span class="label">Type</span><span>{candidateType}</span></div>
+                <div><span class="label">Due Date</span><span>{dueDate}</span></div>
+            </div>
+        </div>
+    </template>
+    <template if:true={error}>
+        <div class="slds-text-color_error">Unable to load candidate.</div>
+    </template>
+</template>
