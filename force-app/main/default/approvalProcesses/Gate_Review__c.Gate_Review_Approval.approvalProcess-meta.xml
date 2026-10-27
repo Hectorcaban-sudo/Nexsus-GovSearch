@@ -25,18 +25,6 @@
         <name>Gate_Approver</name>
     </approvalStep>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
-    <finalApprovalActions>
-        <action>
-            <name>Gate_Approved</name>
-            <type>FieldUpdate</type>
-        </action>
-    </finalApprovalActions>
-    <finalRejectionActions>
-        <action>
-            <name>Gate_Rejected</name>
-            <type>FieldUpdate</type>
-        </action>
-    </finalRejectionActions>
     <label>Gate Review Approval</label>
     <processOrder>1</processOrder>
     <recordEditability>AdminOnly</recordEditability>
