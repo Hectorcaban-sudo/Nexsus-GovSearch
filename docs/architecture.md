@@ -2,7 +2,12 @@
 
 ## Overview
 
-Nexsus GovSearch is a Salesforce-native Agentforce solution that surfaces AI-optimized government contracting opportunities, generates expert briefs, and provides relationship and market intelligence — all inside Lightning Experience.
+Nexsus GovSearch is a Salesforce-native solution that surfaces best-fit government contracting opportunities, supports structured capture, and provides Agentforce assistance — all inside Lightning Experience.
+
+**Design principle**: Deterministic core + Agentforce assist layer.
+
+- Scoring, triage, routing, and gate decisions are rules-based, auditable, and reproducible.
+- Agentforce agents explain scores, generate briefs, suggest actions, and draft plans. Users accept or edit the output.
 
 ```mermaid
 flowchart TD
@@ -12,52 +17,74 @@ flowchart TD
         FC[FedConnect]
         PIEE[PIEE]
         Forecasts[Agency Forecasts]
-        Proprietary[Proprietary Contacts & Past Performance]
     end
 
-    subgraph Salesforce["Salesforce Platform"]
+    subgraph Integration["Integration Layer"]
         IngestionAPI[Ingestion API<br/>Apex REST]
         Callouts[Apex Callouts]
-        DataCloud[Data Cloud]
-        CustomObjects[Custom Objects<br/>Pipeline Candidate, Solicitation,<br/>Award, Gov Contact, etc.]
-        Standard[Standard Objects<br/>Opportunity, Account, Contact]
-        Flows[Flows & Platform Events]
-        Apex[Apex Scoring & Services]
-        Logger[Integration Logger]
-        Agents[Agentforce Agents<br/>Pipeline Scout<br/>Opportunity Intelligence<br/>Research & Relationship]
-        Lightning[Lightning App & LWC]
+        DataCloud[Data Cloud Ingestion]
     end
 
-    External -->|Push| IngestionAPI
-    External -->|Pull| Callouts
-    External --> DataCloud
-    IngestionAPI --> CustomObjects
-    Callouts --> CustomObjects
-    DataCloud --> CustomObjects
-    CustomObjects --> Standard
-    CustomObjects --> Apex
-    Apex --> Logger
-    Agents --> Apex
-    Agents --> Lightning
-    Standard --> Agents
+    subgraph Deterministic["Deterministic Core"]
+        Profile[Company Profile]
+        Rules[Fit Rules]
+        Scoring[PipelineScoutService<br/>Criteria-based scoring + reasons]
+        PC[Pipeline_Candidate__c]
+        Triage[Triage Status + Promote Flow]
+        Gates[Gate Review Approval Process]
+        Scorecard[Bid Decision Scorecard]
+        Opp[Opportunity<br/>Weighted Value]
+    end
+
+    subgraph Assist["Agentforce Assist Layer"]
+        Scout[Pipeline Scout Agent]
+        Intel[Opportunity Intelligence Agent]
+        Research[Research & Relationship Agent]
+    end
+
+    External --> Integration
+    Integration --> PC
+    Profile --> Scoring
+    Rules --> Scoring
+    Scoring --> PC
+    PC --> Triage
+    Triage --> Opp
+    Opp --> Gates
+    Opp --> Scorecard
+    Deterministic --> Assist
+    Assist -->|recommends| Deterministic
 ```
 
-## Core Agents (Agentforce)
+## Deterministic Core
 
-| Agent | Purpose | Key Topics / Actions |
-|-------|---------|----------------------|
-| **Pipeline Scout** | Score and recommend best-fit Pipeline Candidates | Score candidates, Filter by NAICS/agency, Alert on high-score leads, Convert to Opportunity |
-| **Opportunity Intelligence** | Generate AI-authored briefs | Generate Brief, Analyze Incumbent, Identify Whitespace, Prioritize Pursuit |
-| **Research & Relationship** | Market analysis and contacts | Find Key Decision Makers, Build Call Plan, Competitive Analysis |
+| Component | Responsibility |
+|-----------|----------------|
+| Company Profile + Fit Rules | Configurable match criteria (NAICS, PSC, set-asides, vehicles, agencies) |
+| PipelineScoutService | Evaluates matches only; writes score, strategic fit, and Score Reasons |
+| Triage Status + Promote Flow | Explicit Promote / Watch / Dismiss; creates Opportunity on Promote |
+| Gate Review Approval Process | Checklist, approver, and approval before stage advance |
+| Bid Decision Scorecard | Weighted criteria and formula recommendation |
+| Opportunity Weighted Value | TCV × pWin × pGo; history tracking on pWin |
+
+## Agentforce Assist Layer
+
+| Agent | Role |
+|-------|------|
+| **Pipeline Scout** | Explains Score Reasons, surfaces high-fit candidates, suggests promotion |
+| **Opportunity Intelligence** | Generates AI briefs; references score, gates, and bid recommendation |
+| **Research & Relationship** | Identifies contacts, supports competitive analysis, helps draft call plans |
+
+Agents do not own scoring, routing, or gate decisions.
 
 ## Data Model (High-Level)
 
-- **Pipeline_Candidate__c**: AI-qualified candidate (recompete, solicitation, task order) with External_Id__c for upserts
-- **Opportunity** (extended): AI_Relevancy_Score__c, Strategic_Fit__c, Incumbent__c, Pursuit_Priority__c, AI_Brief_Summary__c, NAICS_Tags__c
+- **Pipeline_Candidate__c**: AI-qualified candidate with External_Id__c, Triage Status, Score Reasons
+- **Company_Profile__c** + **Fit_Rule__mdt**: Scoring configuration
+- **Opportunity** (extended): AI score, Strategic Fit, pWin, pGo, Weighted Value
+- **Gate_Review__c**, **Bid_Decision_Scorecard__c**, **Capture_Plan__c**
 - **Solicitation__c**, **Award__c**, **Contract_Vehicle__c**
 - **Agency_Hierarchy__c** / **Government_Contact__c**
-- **Past_Performance_Profile__c**, **Strategic_Objective__c**
-- **Integration_Log__c**: Structured logging for integrations and scoring
+- **Integration_Log__c**: Structured logging
 
 See [data-model.md](data-model.md) for field-level details.
 
@@ -72,13 +99,16 @@ See [data-model.md](data-model.md) for field-level details.
 
 - Designed for Government Cloud / FedRAMP considerations
 - Field-level security, sharing rules, and agent user permissions
-- Audit trail via Integration Logs and Salesforce audit features
+- Audit trail via Integration Logs, Score Reasons, Field History, and Approval Processes
 - No model training on sensitive customer or government data
+- Agentforce uses the Einstein Trust Layer
 
 ## UI Pattern
 
 - Custom Lightning App: Nexsus GovSearch
-- LWC components: `pipelineCandidateList` (dashboard with summary cards), `opportunityAiBriefCard`
+- LWC components: `pipelineCandidateList` (dashboard with summary cards and triage), `opportunityAiBriefCard`
 - Agentforce panel on record pages
 
-Mockups are described in [mockups.md](mockups.md).
+## Diagrams
+
+See [diagrams.md](diagrams.md) for updated architecture, user workflow, scoring workflow, and deterministic-vs-Agentforce diagrams.
