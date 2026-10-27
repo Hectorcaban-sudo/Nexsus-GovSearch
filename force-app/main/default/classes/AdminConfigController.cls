@@ -5,14 +5,43 @@
 public with sharing class AdminConfigController {
     private static final String SOURCE = 'AdminConfigController';
 
+    // Custom objects to clear (Opportunity is intentionally excluded)
+    private static final List<String> CLEAR_OBJECTS = new List<String>{
+        'Pipeline_Candidate__c',
+        'Company_Profile__c',
+        'Agency_Hierarchy__c',
+        'Government_Contact__c',
+        'Solicitation__c',
+        'Award__c',
+        'Contract_Vehicle__c',
+        'Capture_Plan__c',
+        'Gate_Review__c',
+        'Bid_Decision_Scorecard__c',
+        'Call_Report__c',
+        'Teaming_Partner__c',
+        'Forecast__c',
+        'Saved_Search__c',
+        'Notice_Version__c',
+        'Strategic_Objective__c',
+        'Integration_Log__c'
+    };
+
     @AuraEnabled
     public static Map<String, Object> getAdminStatus() {
         assertAdminAccess();
         Map<String, Object> status = new Map<String, Object>();
-        status.put('candidateCount', [SELECT COUNT() FROM Pipeline_Candidate__c]);
-        status.put('companyProfileCount', [SELECT COUNT() FROM Company_Profile__c]);
-        status.put('hasCompanyProfile', [SELECT COUNT() FROM Company_Profile__c] > 0);
+        status.put('candidateCount', safeCount('Pipeline_Candidate__c'));
+        status.put('companyProfileCount', safeCount('Company_Profile__c'));
+        status.put('hasCompanyProfile', safeCount('Company_Profile__c') > 0);
         return status;
+    }
+
+    private static Integer safeCount(String objectName) {
+        try {
+            return Database.countQuery('SELECT COUNT() FROM ' + objectName);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @AuraEnabled
@@ -21,7 +50,7 @@ public with sharing class AdminConfigController {
         try {
             List<Pipeline_Candidate__c> toInsert = generateSampleCandidates(20);
             String msg = insertCandidates(toInsert);
-            if ([SELECT COUNT() FROM Company_Profile__c] == 0) {
+            if (safeCount('Company_Profile__c') == 0) {
                 Company_Profile__c p = new Company_Profile__c(
                     Name = 'Nexsus Sample Company',
                     Primary_NAICS__c = '541511;541512',
@@ -66,7 +95,7 @@ public with sharing class AdminConfigController {
 
         if (data.containsKey('Company_Profile__c')) {
             List<Object> rows = (List<Object>) data.get('Company_Profile__c');
-            if (!rows.isEmpty() && [SELECT COUNT() FROM Company_Profile__c] == 0) {
+            if (!rows.isEmpty() && safeCount('Company_Profile__c') == 0) {
                 Map<String, Object> m = (Map<String, Object>) rows[0];
                 Company_Profile__c p = new Company_Profile__c();
                 p.Name = (String) m.get('Name');
@@ -121,25 +150,15 @@ public with sharing class AdminConfigController {
             Map<String, Object> m = (Map<String, Object>) o;
             Pipeline_Candidate__c c = new Pipeline_Candidate__c();
             c.Name = (String) m.get('Name');
-            c.External_Id__c = (String) m.get('External_Id__c');
-            c.Agency__c = (String) m.get('Agency__c');
-            c.Candidate_Type__c = (String) m.get('Candidate_Type__c');
-            c.NAICS__c = (String) m.get('NAICS__c');
+            if (m.get('External_Id__c') != null) c.External_Id__c = (String) m.get('External_Id__c');
+            if (m.get('Agency__c') != null) c.Agency__c = (String) m.get('Agency__c');
+            if (m.get('Candidate_Type__c') != null) c.Candidate_Type__c = (String) m.get('Candidate_Type__c');
+            if (m.get('NAICS__c') != null) c.NAICS__c = (String) m.get('NAICS__c');
             if (m.get('Estimated_Value__c') != null) {
                 c.Estimated_Value__c = Decimal.valueOf(String.valueOf(m.get('Estimated_Value__c')));
             }
             if (m.get('Due_Date__c') != null) {
                 c.Due_Date__c = Date.valueOf((String) m.get('Due_Date__c'));
-            }
-            // Only set Source_System__c if the field exists in the org
-            if (hasField('Pipeline_Candidate__c', 'Source_System__c')) {
-                c.put('Source_System__c', m.get('Source_System__c') != null ? (String) m.get('Source_System__c') : 'Sample');
-            }
-            if (hasField('Pipeline_Candidate__c', 'Status__c') && m.get('Status__c') != null) {
-                c.put('Status__c', (String) m.get('Status__c'));
-            }
-            if (hasField('Pipeline_Candidate__c', 'Triage_Status__c') && m.get('Triage_Status__c') != null) {
-                c.put('Triage_Status__c', (String) m.get('Triage_Status__c'));
             }
             toInsert.add(c);
         }
@@ -149,22 +168,27 @@ public with sharing class AdminConfigController {
     @AuraEnabled
     public static String clearSampleData() {
         assertAdminAccess();
-        try {
-            List<Pipeline_Candidate__c> samples;
-            if (hasField('Pipeline_Candidate__c', 'Source_System__c')) {
-                samples = Database.query('SELECT Id FROM Pipeline_Candidate__c WHERE Source_System__c = \'Sample\' LIMIT 200');
-            } else {
-                // Fallback: match by Name prefix
-                samples = [SELECT Id FROM Pipeline_Candidate__c WHERE Name LIKE 'Sample%' LIMIT 200];
+        List<String> messages = new List<String>();
+        Integer totalDeleted = 0;
+
+        for (String objName : CLEAR_OBJECTS) {
+            try {
+                // Delete all records of this object (no field filters)
+                List<SObject> records = Database.query('SELECT Id FROM ' + objName + ' LIMIT 200');
+                if (!records.isEmpty()) {
+                    delete records;
+                    totalDeleted += records.size();
+                    messages.add(objName + ': ' + records.size());
+                }
+            } catch (Exception e) {
+                // Object may not exist or user may lack access — skip
+                messages.add(objName + ': skipped');
             }
-            delete samples;
-            String msg = 'Cleared ' + samples.size() + ' sample Pipeline Candidates.';
-            IntegrationLogger.info(SOURCE, msg);
-            return msg;
-        } catch (Exception e) {
-            IntegrationLogger.error(SOURCE, e);
-            throw new AuraHandledException('Failed to clear sample data: ' + e.getMessage());
         }
+
+        String msg = 'Cleared ' + totalDeleted + ' records from custom objects (Opportunity excluded). ' + String.join(messages, '; ');
+        IntegrationLogger.info(SOURCE, msg);
+        return msg;
     }
 
     @AuraEnabled
@@ -194,10 +218,6 @@ public with sharing class AdminConfigController {
         return msg;
     }
 
-    private static Boolean hasField(String objectName, String fieldName) {
-        return Schema.getGlobalDescribe().get(objectName).getDescribe().fields.getMap().containsKey(fieldName);
-    }
-
     private static void assertAdminAccess() {
         if (!FeatureManagement.checkPermission('Nexsus_Admin_Access')) {
             throw new AuraHandledException('You do not have Nexsus Admin Access. Contact your administrator.');
@@ -218,15 +238,6 @@ public with sharing class AdminConfigController {
             c.NAICS__c = naics[Math.mod(i, naics.size())];
             c.Estimated_Value__c = 500000 + (i * 250000);
             c.Due_Date__c = Date.today().addDays(30 + Math.mod(i, 120));
-            if (hasField('Pipeline_Candidate__c', 'Source_System__c')) {
-                c.put('Source_System__c', 'Sample');
-            }
-            if (hasField('Pipeline_Candidate__c', 'Status__c')) {
-                c.put('Status__c', 'New');
-            }
-            if (hasField('Pipeline_Candidate__c', 'Triage_Status__c')) {
-                c.put('Triage_Status__c', 'New');
-            }
             records.add(c);
         }
         return records;
