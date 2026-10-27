@@ -1,6 +1,6 @@
 # Deployment Instructions
 
-This guide covers deploying Nexsus GovSearch, configuring integrations (including SAM.gov and Data Cloud), and setting up Agentforce agents.
+This guide covers deploying Nexsus GovSearch, configuring integrations (including SAM.gov and Data Cloud), setting up the AI layer, and deploying Agentforce agents.
 
 ## Prerequisites
 
@@ -49,11 +49,42 @@ This guide covers deploying Nexsus GovSearch, configuring integrations (includin
 
 ## Post-Deploy Configuration
 
-1. Assign the **Nexsus GovSearch User** permission set to users who will access the app.
+1. Assign persona permission sets:
+   - **Nexsus_BD_Analyst** — BD / Opportunity Analyst
+   - **Nexsus_Capture_Manager** — Capture Manager
+   - **Nexsus_Growth_Executive** — BD / Growth Executive
 2. Open the **Nexsus GovSearch** Lightning App.
 3. Add the `pipelineCandidateList` LWC to a Home page or App page.
 4. Add the `opportunityAiBriefCard` LWC to Opportunity record pages (via Lightning App Builder).
-5. Verify `Integration_Log__c` is available for reviewing integration activity.
+5. Assign the Pipeline Candidate, Capture Plan, and Gate Review layouts.
+6. Create a singleton **Company Profile** record with Primary NAICS and set-aside eligibility.
+7. (Optional) Create sample **Fit Rule** custom metadata records with Weight values.
+8. Verify `Integration_Log__c` is available for reviewing integration activity.
+9. Activate the **Promote Pipeline Candidate** Flow if it is not active after deploy.
+
+## AI Layer Setup
+
+The AI layer consists of rules-based scoring + Agentforce agents. See [docs/ai-layer.md](ai-layer.md) for the full explanation.
+
+### Scoring
+1. Ensure a Company Profile record exists.
+2. (Optional) Configure Fit Rule custom metadata.
+3. Run scoring:
+   ```apex
+   PipelineScoutService.refreshScores();
+   ```
+4. Confirm `AI_Relevancy_Score__c` and `Strategic_Fit__c` are populated on Pipeline Candidates.
+
+### Triage & Promotion
+1. Analysts set `Triage_Status__c` to Promote, Watch, or Dismiss.
+2. Dismiss requires a reason (validation rule).
+3. Promote triggers the Flow that creates an Opportunity and links it.
+
+### Agentforce
+1. In Setup → **Agentforce Studio**, create the three Employee Agents (see Agentforce section below).
+2. Expose Apex methods as actions.
+3. Ground agents on Pipeline Candidate, Opportunity, Award, and Government Contact data.
+4. Enable the Agentforce panel on Opportunity and Pipeline Candidate record pages.
 
 ## Agentforce Setup & Deployment
 
@@ -76,10 +107,10 @@ This guide covers deploying Nexsus GovSearch, configuring integrations (includin
    - Topics: Identify Key Decision Makers, Competitive & Partner Analysis, Build Call Plan.
    - Grounding: `Government_Contact__c`, `Agency_Hierarchy__c`, `Award__c`.
 
-2. Configure agent users with the Nexsus GovSearch User permission set (least privilege).
+2. Configure agent users with the appropriate persona permission sets (least privilege).
 3. Enable the Agentforce panel on:
    - Opportunity record pages
-   - Pipeline Candidate record pages (if desired)
+   - Pipeline Candidate record pages
    - Home / App pages
 4. Test each agent with sample utterances (see `docs/agentforce/agent-sketches.md`).
 5. (Optional) Export agent metadata into the project under the appropriate `genAi` folders once stable.
@@ -130,17 +161,20 @@ See `docs/external-data-sources.md` for the full SAM.gov field mapping and examp
 - Use pagination (`limit` max 1000 + `offset`).
 - Daily rate limits vary by user role.
 - Store the API key in a Named Credential or secure middleware configuration — never hard-code it.
+- Follow the hybrid ingestion strategy in `docs/external-data-sources.md`.
 
 ## Sample Data & Testing
 
-1. Load sample Pipeline Candidates (see `docs/sample-data.md` or create manually).
-2. Run scoring:
+1. Create a Company Profile record.
+2. Load sample Pipeline Candidates (see `docs/sample-data.md` or create manually).
+3. Run scoring:
    ```apex
    PipelineScoutService.refreshScores();
    ```
-3. Open the Nexsus GovSearch app and verify the `pipelineCandidateList` dashboard.
-4. Open an Opportunity and verify the `opportunityAiBriefCard`.
-5. Test the Agentforce agents with the sample utterances from the agent sketches.
+4. Open the Nexsus GovSearch app and verify the `pipelineCandidateList` dashboard.
+5. Set a candidate to Promote and confirm the Flow creates an Opportunity.
+6. Open an Opportunity and verify the `opportunityAiBriefCard`.
+7. Test the Agentforce agents with the sample utterances from the agent sketches.
 
 ## Packaging (Optional Unlocked Package)
 
@@ -159,7 +193,8 @@ Install in target orgs with `sf package install`.
 - Apply Government Cloud / FedRAMP security settings.
 - Review Agentforce compliance notes and regularly audit `Integration_Log__c`.
 - Implement retry and dead-letter handling in middleware for SAM.gov rate limits.
-- Test scoring logic with realistic past-performance and strategic objective data.
+- Test scoring logic with realistic Company Profile and Fit Rule data.
+- Assign persona permission sets and configure sharing rules.
 
 ## Troubleshooting
 
@@ -169,6 +204,7 @@ Install in target orgs with `sf package install`.
 - Confirm agent user permissions if agents cannot query records.
 - Use `sf project deploy report` and the VS Code Problems panel for metadata errors.
 - Review Data Cloud ingestion logs if records are not appearing in the DMO or CRM.
+- If promotion does not create an Opportunity, confirm the Flow is active and the candidate has no Related Opportunity yet.
 
 ## Related Documentation
 
@@ -176,5 +212,8 @@ Install in target orgs with `sf package install`.
 - [docs/diagrams.md](diagrams.md)
 - [docs/external-data-sources.md](external-data-sources.md)
 - [docs/data-model.md](data-model.md)
+- [docs/ai-layer.md](ai-layer.md)
+- [docs/requirements-gap-analysis.md](requirements-gap-analysis.md)
+- [docs/mvp-implementation-notes.md](mvp-implementation-notes.md)
 - [docs/agentforce/agent-sketches.md](agentforce/agent-sketches.md)
 - [docs/lwc-stubs.md](lwc-stubs.md)
