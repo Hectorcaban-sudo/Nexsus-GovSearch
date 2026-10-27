@@ -2,63 +2,51 @@
 
 Visual workflow and architecture diagrams (JPG). High-resolution images for presentations and documentation.
 
-## Architecture Diagram
+## Updated Architecture Diagram
 
-![Nexsus GovSearch Architecture](diagrams/architecture.jpg)
+![Nexsus GovSearch Architecture](diagrams/architecture-updated.jpg)
 
-Shows external sources (SAM.gov, USAspending, FedConnect) flowing through the Integration Layer (Data Cloud Ingestion API, Apex Callout, Apex REST) into the Salesforce Platform (Pipeline_Candidate__c, Opportunity, Agentforce Agents, LWC Dashboard).
+Shows external sources (SAM.gov, USAspending, Agency Forecasts) flowing through the Integration Layer (Apex Callouts, Data Cloud Ingestion API, Ingestion API) into the Salesforce Core (Pipeline Candidate, Company Profile, Fit Rules, Scoring Service, Triage Flow, Gate Review Approval, Bid Scorecard, Opportunity). Agentforce Assist Layer sits on top of the deterministic core.
 
-## Pipeline Scout User Workflow
+## User Workflow (Discovery to Bid Decision)
 
-![Pipeline Scout User Workflow](diagrams/user-workflow.jpg)
+![User Workflow](diagrams/user-workflow-updated.jpg)
 
-BD user path: Open app → View AI-scored dashboard → Review high-score candidates → Decide Pursue or Disqualify → Convert to Opportunity → View AI Brief → Build Call Plan.
+1. Data Ingestion from SAM.gov  
+2. Criteria-based Scoring (Company Profile + Fit Rules, stores reasons)  
+3. Analyst Review of scored candidates and Score Reasons  
+4. Triage (Promote / Watch / Dismiss)  
+5. Promote Flow creates Opportunity  
+6. Gate Review Approval Process  
+7. Bid Decision Scorecard  
+8. Agentforce assists with briefs and explanations
 
-## SAM.gov to Data Cloud Ingestion Sequence
+## Deterministic Core vs Agentforce Assist
 
-![SAM.gov to Data Cloud Sequence](diagrams/sam-data-cloud-sequence.jpg)
+![Deterministic Core vs Agentforce](diagrams/deterministic-vs-agentforce.jpg)
 
-Sequence: Middleware calls SAM.gov API → Transform → POST to Data Cloud Ingestion API → CRM Sync to Pipeline_Candidate__c → Score via PipelineScoutService → Ground Agentforce agents.
+Clear separation: Deterministic Core owns scoring rules, triage status, Promote Flow, Gate Approval Process, Bid Scorecard formula, and Weighted Value. Agentforce Assist reads from the core and recommends (explain score reasons, generate AI brief, suggest promotion, draft capture plan, answer questions).
 
-## Hybrid SAM.gov Ingestion Strategy
+## Pipeline Scoring Workflow
 
-![Hybrid Ingestion Strategy](diagrams/hybrid-ingestion-strategy.jpg)
+![Scoring Workflow](diagrams/scoring-workflow.jpg)
 
-Agency-level API filters (Agency, Date Window, NAICS) → Land in Data Cloud / Pipeline_Candidate__c → Downstream team filtering, list views, scoring, and Agentforce in Salesforce.
+Company Profile (NAICS, PSC, Vehicles, Target Agencies) and Fit Rules (Field, Operator, Value, Weight) feed PipelineScoutService. Service evaluates matches only and writes AI Score, Strategic Fit, and Score Reasons on the Pipeline Candidate.
+
+## Earlier Diagrams (still valid)
+
+- [SAM.gov to Data Cloud Sequence](diagrams/sam-data-cloud-sequence.jpg)
+- [Hybrid Ingestion Strategy](diagrams/hybrid-ingestion-strategy.jpg)
 
 ## Notes
 
-- JPG diagrams are intended for `docs/diagrams/`.
-- Generated to match the Nexsus GovSearch solution design.
+- Place the latest JPG files in `docs/diagrams/`.
+- Generated to match the current Nexsus GovSearch solution (criteria-based scoring, triage, gates, Agentforce assist layer).
 - Update or regenerate as the architecture evolves.
 
-## Mermaid Source (for editing)
+## Related Documentation
 
-The Mermaid versions below can be used to regenerate or edit the diagrams.
-
-### High-Level Architecture
-
-```mermaid
-flowchart TD
-    subgraph External["External Data Sources"]
-        SAM[SAM.gov<br/>Get Opportunities API]
-        USA[USAspending]
-        FC[FedConnect]
-    end
-
-    subgraph Integration["Integration Layer"]
-        DCIngest[Data Cloud Ingestion API]
-        Callout[PipelineScoutCalloutService]
-        ApexIngest[PipelineCandidateIngestionService]
-    end
-
-    subgraph Salesforce["Salesforce Platform"]
-        PC[Pipeline_Candidate__c]
-        Opp[Opportunity]
-        Agents[Agentforce Agents]
-        LWC[LWC Components]
-    end
-
-    External --> Integration
-    Integration --> Salesforce
-```
+- [docs/architecture.md](architecture.md)
+- [docs/ai-layer.md](ai-layer.md)
+- [docs/scoring-and-capture-updates.md](scoring-and-capture-updates.md)
+- [docs/deployment.md](deployment.md)
