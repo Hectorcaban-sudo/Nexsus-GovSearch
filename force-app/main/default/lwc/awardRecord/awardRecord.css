@@ -1,0 +1,5 @@
+.header { padding: 1.25rem 1.5rem; background: #fff; border-bottom: 1px solid #e5e5e5; }
+.eyebrow { font-size: 0.75rem; text-transform: uppercase; color: #706e6b; }
+h1 { margin: 0.25rem 0 0.5rem; font-size: 1.5rem; }
+.pill { display: inline-block; background: #f3f3f3; border-radius: 999px; padding: 0.2rem 0.65rem; font-size: 0.75rem; }
+.section { background: #fff; margin: 1rem 1.5rem; padding: 1rem; border: 1px solid #e5e5e5; border-radius: 8px; }
