@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Set_Aside_Eligibility__c</fullName>
+    <label>Set-Aside Eligibility</label>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <value><fullName>8(a)</fullName><default>false</default></value>
+            <value><fullName>SDVOSB</fullName><default>false</default></value>
+            <value><fullName>WOSB</fullName><default>false</default></value>
+            <value><fullName>HUBZone</fullName><default>false</default></value>
+            <value><fullName>Small Business</fullName><default>false</default></value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Teaming Partner</label>
+    <pluralLabel>Teaming Partners</pluralLabel>
+    <nameField>
+        <label>Teaming Partner Name</label>
+        <type>Text</type>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ControlledByParent</sharingModel>
+    <description>Partner role, workshare, and capability on a Pursuit.</description>
+</CustomObject>

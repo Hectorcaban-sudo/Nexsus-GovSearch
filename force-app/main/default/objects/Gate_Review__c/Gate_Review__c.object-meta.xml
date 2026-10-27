@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Gate Review</label>
+    <pluralLabel>Gate Reviews</pluralLabel>
+    <nameField>
+        <label>Gate Review Name</label>
+        <type>Text</type>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ControlledByParent</sharingModel>
+    <description>Gate checklist, decision, and approvers for a Pursuit.</description>
+</CustomObject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Notice Version</label>
+    <pluralLabel>Notice Versions</pluralLabel>
+    <nameField>
+        <label>Version Name</label>
+        <type>Text</type>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ControlledByParent</sharingModel>
+    <description>Amendment or modification snapshot of an Opportunity Intel / Pipeline Candidate.</description>
+</CustomObject>
