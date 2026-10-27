@@ -8,6 +8,15 @@ On Opportunity, Contract Vehicle, and Award records, the digital assistant (Agen
 
 It also includes contact intelligence (senior government decision makers, biographical details, and org chart views of agency/office hierarchies) to help Growth teams build the right relationships, plus streamlined research and analysis tools for partner identification, market/competitive analysis, and account planning.
 
+## Design Principle
+
+**Deterministic core + Agentforce assist layer.**
+
+- Scoring, triage, routing, and gate decisions are rules-based, auditable, and reproducible.
+- Agentforce agents explain scores, generate briefs, suggest actions, and draft plans. Users accept or edit the output.
+
+See [docs/ai-layer.md](docs/ai-layer.md) and the diagrams in [docs/diagrams.md](docs/diagrams.md).
+
 ## Requirements Alignment
 
 The solution is being built against the **GovCon Capture & Market Intelligence on Salesforce — Requirements Document**.
@@ -15,17 +24,19 @@ The solution is being built against the **GovCon Capture & Market Intelligence o
 - Full gap analysis: [docs/requirements-gap-analysis.md](docs/requirements-gap-analysis.md)
 - Updated data model: [docs/data-model.md](docs/data-model.md)
 - AI layer explanation: [docs/ai-layer.md](docs/ai-layer.md)
+- Scoring and capture updates: [docs/scoring-and-capture-updates.md](docs/scoring-and-capture-updates.md)
 
-**Current status**: Strong foundation for the intelligence and AI layer. MVP capture CRM objects (Company Profile, Fit Rules, Gates, Capture Plan, Bid Scorecard, Saved Search, Teaming, Call Reports, Notice Versions, Forecasts) have been scaffolded with triage, scoring, and promotion Flow.
+**Current status**: Criteria-based scoring with stored reasons, triage and promote Flow, Gate Review Approval Process, Bid Decision Scorecard with weighted recommendation, and Weighted Value formula. Agentforce agents assist on top of the deterministic core.
 
 ## Key Features
 
-- **AI-Optimized Pipeline**: Continuously scores and surfaces highly relevant Pipeline Candidates based on past performance, NAICS/PSC alignment, strategic objectives, contract vehicle access, and historical win patterns.
+- **Criteria-Based Scoring**: Matches Pipeline Candidates against Company Profile (NAICS, PSC, set-asides, vehicles, target agencies) and configurable Fit Rules. Stores plain-language Score Reasons.
 - **AI-Authored Briefs**: Agentforce digital assistant generates expert briefs on Opportunities, Awards, and Contract Vehicles.
 - **Consolidated Federal Data**: Single view aggregating SAM.gov, USAspending, FedConnect, PIEE, agency forecasts, and proprietary contact/past-performance data.
 - **Flexible Ingestion**: Support for both pull (Apex callouts) and push (Ingestion API / Data Cloud) patterns.
 - **Contact & Relationship Intelligence**: Org chart hierarchies, decision-maker bios, influence ratings, and AI-suggested call/account plans.
-- **CRM-Native**: Fully embedded in Salesforce Lightning. Qualified Pipeline Candidates convert to Opportunities.
+- **CRM-Native**: Fully embedded in Salesforce Lightning. Qualified Pipeline Candidates convert to Opportunities via Triage and Promote Flow.
+- **Capture Controls**: Gate Review Approval Process, Bid/No-Bid Scorecard, Weighted Value (TCV × pWin × pGo).
 - **Agentforce Agents**:
   - Pipeline Scout Agent
   - Opportunity Intelligence Agent
@@ -34,14 +45,16 @@ The solution is being built against the **GovCon Capture & Market Intelligence o
 ## Architecture & Diagrams
 
 - [docs/architecture.md](docs/architecture.md) — High-level architecture overview
-- [docs/diagrams.md](docs/diagrams.md) — Workflow and architecture diagrams (JPG + Mermaid)
+- [docs/diagrams.md](docs/diagrams.md) — Updated architecture, user workflow, scoring workflow, and deterministic-vs-Agentforce diagrams
 - [docs/requirements-gap-analysis.md](docs/requirements-gap-analysis.md) — Gap analysis vs. requirements document
 - [docs/ai-layer.md](docs/ai-layer.md) — AI scoring and Agentforce implementation
+- [docs/scoring-and-capture-updates.md](docs/scoring-and-capture-updates.md) — Criteria scoring, gates, and bid scorecard
 - [docs/deployment.md](docs/deployment.md) — Full deployment and setup instructions
 
 High-level components:
 - Custom Lightning App (Nexsus GovSearch)
-- Agentforce Employee Agents
+- Deterministic scoring and process layer (Company Profile, Fit Rules, Triage, Gates, Bid Scorecard)
+- Agentforce Assist Layer
 - Flows + Apex actions + Prompt Templates
 - Custom objects including Pipeline_Candidate__c, Company_Profile__c, Gate_Review__c, Capture_Plan__c, and supporting MVP objects
 - Integrations via Apex Callouts, Ingestion API, MuleSoft, Platform Events, or Data Cloud
@@ -60,6 +73,7 @@ Nexsus-GovSearch/
 │   ├── external-data-sources.md
 │   ├── requirements-gap-analysis.md
 │   ├── ai-layer.md
+│   ├── scoring-and-capture-updates.md
 │   ├── mvp-implementation-notes.md
 │   ├── sample-data.md
 │   └── lwc-stubs.md
@@ -107,7 +121,7 @@ See [docs/deployment.md](docs/deployment.md) for full instructions.
 
 ## Status
 
-This repository contains the Salesforce DX project with custom objects (including newly scaffolded MVP objects), fields, layouts, permission sets, pure LWC components, Apex services (callout + ingestion + scoring + logging), Agentforce sketches, architecture diagrams, a full requirements gap analysis, and detailed AI layer documentation.
+This repository contains the Salesforce DX project with custom objects, criteria-based scoring with stored reasons, triage and promote Flow, Gate Review Approval Process, Bid Decision Scorecard, Weighted Value, pure LWC components, Apex services, Agentforce sketches, updated architecture and workflow diagrams, a full requirements gap analysis, and detailed AI layer documentation.
 
 ## License
 
