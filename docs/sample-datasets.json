@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "Sample Opportunity 001",
+    "External_Id__c": "SAMPLE-0001",
+    "Agency__c": "Department of Veterans Affairs",
+    "Candidate_Type__c": "Solicitation",
+    "NAICS__c": "541512",
+    "Estimated_Value__c": 750000,
+    "Due_Date__c": "2026-02-02",
+    "Source_System__c": "Sample",
+    "Status__c": "New",
+    "Triage_Status__c": "New"
+  },
+  {
+    "Name": "Sample Opportunity 002",
+    "External_Id__c": "SAMPLE-0002",
+    "Agency__c": "Department of Homeland Security",
+    "Candidate_Type__c": "Task Order",
+    "NAICS__c": "541519",
+    "Estimated_Value__c": 1000000,
+    "Due_Date__c": "2026-03-03",
+    "Source_System__c": "Sample",
+    "Status__c": "New",
+    "Triage_Status__c": "New"
+  }
+]
