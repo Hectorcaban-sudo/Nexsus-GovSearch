@@ -19,6 +19,7 @@
                 <type>relatedUserField</type>
                 <name>Approver__c</name>
             </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
         <label>Gate Approver</label>
         <name>Gate_Approver</name>
