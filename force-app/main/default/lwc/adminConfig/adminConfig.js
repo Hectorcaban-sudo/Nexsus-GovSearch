@@ -1,6 +1,7 @@
 import { LightningElement, track } from 'lwc';
 import getAdminStatus from '@salesforce/apex/AdminConfigController.getAdminStatus';
 import loadSampleDatasets from '@salesforce/apex/AdminConfigController.loadSampleDatasets';
+import uploadSampleDatasets from '@salesforce/apex/AdminConfigController.uploadSampleDatasets';
 import clearSampleData from '@salesforce/apex/AdminConfigController.clearSampleData';
 import refreshAllScores from '@salesforce/apex/AdminConfigController.refreshAllScores';
 
@@ -35,6 +36,26 @@ export default class AdminConfig extends LightningElement {
         } finally {
             this.isLoading = false;
         }
+    }
+
+    handleFileChange(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async () => {
+            this.isLoading = true;
+            this.message = null;
+            this.error = null;
+            try {
+                this.message = await uploadSampleDatasets({ jsonContent: reader.result });
+                await this.loadStatus();
+            } catch (e) {
+                this.error = e.body?.message || e.message;
+            } finally {
+                this.isLoading = false;
+            }
+        };
+        reader.readAsText(file);
     }
 
     async handleClearSample() {
