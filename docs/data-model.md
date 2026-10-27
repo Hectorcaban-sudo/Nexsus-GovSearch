@@ -10,7 +10,9 @@ AI-qualified pipeline candidate (recompete, solicitation, or task order) that ca
 - Agency__c, Candidate_Type__c, Estimated_Value__c
 - AI_Relevancy_Score__c, Strategic_Fit__c, Status__c
 - Source_System__c, Due_Date__c, NAICS__c, Incumbent__c
-- **Triage status** (Promote / Watch / Dismiss) to be added
+- **Triage_Status__c** (New / Watch / Promote / Dismiss)
+- **Dismiss_Reason__c**
+- **Related_Opportunity__c** (lookup when promoted)
 
 ### Solicitation__c
 Solicitation details linked to Pipeline Candidate or Opportunity.
@@ -36,51 +38,46 @@ Business unit goals that influence relevance.
 ### Integration_Log__c
 Structured logs for all integrations and scoring.
 
-## MVP Objects (Scaffolded)
+## MVP Objects (Scaffolded + Key Fields)
 
 ### Company_Profile__c
 Singleton company profile for fit scoring.
 - Primary_NAICS__c
 - Set_Aside_Eligibility__c (8(a), SDVOSB, WOSB, HUBZone, Small)
-- Core capabilities, certifications, target agencies (to be expanded)
 
 ### Fit_Rule__mdt (Custom Metadata)
 Configurable scoring weights and conditions against the Company Profile.
 
 ### Notice_Version__c
-Amendment / modification snapshot of a Pipeline Candidate.
-- Parent: Pipeline_Candidate__c
-- Changed fields (due date, set-aside, NAICS, scope)
+- Master-detail to Pipeline_Candidate__c
+- Change_Summary__c
 
 ### Forecast__c
-Agency procurement forecast entry that can later link to a solicitation.
+Agency procurement forecast entry.
 
 ### Gate_Review__c
-Gate checklist, decision, and approvers for a Pursuit (Opportunity).
-- Parent: Opportunity
-- Gate number, checklist, decision, approvers
+- Master-detail to Opportunity
+- Gate_Number__c (Gate 0–4)
+- Decision__c (Pending / Approved / Rejected / Conditional)
 
 ### Bid_Decision_Scorecard__c
-Weighted bid/no-bid criteria and outcome.
-- Parent: Opportunity
+- Master-detail to Opportunity
 
 ### Capture_Plan__c
-Win themes, discriminators, solution approach, price-to-win, risks.
-- Parent: Opportunity (1:1)
+- Master-detail to Opportunity
+- Win_Themes__c
 
 ### Saved_Search__c
 User-defined search criteria and alert settings.
-- Owner, criteria, alert frequency
 
 ### Teaming_Partner__c
-Partner role, workshare %, and capability on a Pursuit.
-- Parent: Opportunity
-- Lookup to Account (partner)
+- Master-detail to Opportunity
+- Partner_Account__c (lookup to Account)
+- Workshare_Percent__c
 
 ### Call_Report__c
-Customer engagement record.
-- Related to Contact, Agency, Opportunity
-- Objectives, outcomes, follow-ups
+- Related_Opportunity__c
+- Objectives__c
 
 ## Opportunity (Pursuit) Extensions
 
@@ -92,25 +89,22 @@ Customer engagement record.
 | Pursuit_Priority__c | Picklist | High / Medium / Low / Watch |
 | AI_Brief_Summary__c | Long Text Area | Generated brief |
 | NAICS_Tags__c | Text | Capability tags |
-| pWin__c | Percent | Probability of win (to be added) |
-| pGo__c | Percent | Probability of go (to be added) |
-| Weighted_Value__c | Currency | TCV × pWin × pGo (to be added) |
+| pWin__c | Percent | Probability of win |
+| pGo__c | Percent | Probability of go |
 
 ## Key Relationships
 
-- Pipeline_Candidate__c → Opportunity (promotion / conversion)
-- Notice_Version__c → Pipeline_Candidate__c
-- Forecast__c → Agency / later Pipeline_Candidate__c
-- Gate_Review__c, Bid_Decision_Scorecard__c, Capture_Plan__c, Teaming_Partner__c → Opportunity
-- Call_Report__c → Contact, Account (Agency), Opportunity
+- Pipeline_Candidate__c → Opportunity (Related_Opportunity__c)
+- Notice_Version__c → Pipeline_Candidate__c (master-detail)
+- Gate_Review__c, Bid_Decision_Scorecard__c, Capture_Plan__c, Teaming_Partner__c → Opportunity (master-detail)
+- Teaming_Partner__c → Account (Partner_Account__c)
+- Call_Report__c → Opportunity
 - Company_Profile__c drives Fit_Rule__mdt scoring
-- Saved_Search__c → User
 
-## Next Field & Layout Work
+## Permission Sets
 
-- Expand fields on all new objects
-- Add page layouts for Gate Review, Capture Plan, Company Profile
-- Permission sets per persona
-- Triage status and actions on Pipeline_Candidate__c
+- Nexsus_BD_Analyst
+- Nexsus_Capture_Manager
+- Nexsus_Growth_Executive
 
-See also `docs/requirements-gap-analysis.md`.
+See also `docs/requirements-gap-analysis.md` and `docs/mvp-implementation-notes.md`.
