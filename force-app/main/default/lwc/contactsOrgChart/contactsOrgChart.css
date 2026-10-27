@@ -1,0 +1,28 @@
+.wrap { display: grid; grid-template-columns: 240px 1fr 280px; min-height: 100%; background: #f3f3f3; }
+.sidebar { background: #fff; border-right: 1px solid #e5e5e5; padding: 1rem; }
+.sidebar h3 { font-size: 0.9rem; margin: 0 0 0.75rem; }
+.tree { list-style: none; padding-left: 0; font-size: 0.8rem; }
+.tree ul { list-style: none; padding-left: 1rem; }
+.tree .active { background: #e1f0ff; padding: 0.15rem 0.35rem; border-radius: 3px; }
+.main { padding: 1rem 1.25rem; }
+.main h2 { margin: 0 0 0.75rem; font-size: 1.2rem; }
+.tabs { display: flex; gap: 1rem; border-bottom: 1px solid #e5e5e5; margin-bottom: 1rem; }
+.tab { padding: 0.4rem 0; cursor: pointer; }
+.tab.active { border-bottom: 2px solid #0176D3; font-weight: 600; }
+.contact { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0; background: #fff; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #0176D3; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; }
+.cname { font-weight: 600; }
+.ctitle { font-size: 0.8rem; color: #706e6b; }
+.cbio { font-size: 0.75rem; color: #3e3e3c; margin-top: 0.2rem; }
+.influence { margin-left: auto; text-align: right; }
+.stars { color: #fe9339; font-size: 0.85rem; }
+.ilabel { font-size: 0.7rem; color: #706e6b; }
+.org { margin-top: 1.5rem; background: #fff; padding: 1rem; border-radius: 8px; border: 1px solid #e5e5e5; }
+.org-box { border: 1px solid #e5e5e5; border-radius: 6px; padding: 0.5rem; text-align: center; font-size: 0.8rem; background: #fafafa; }
+.org-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: center; }
+.agent { background: #032d60; color: #fff; padding: 1rem; }
+.agent-header { font-weight: 600; margin-bottom: 0.75rem; }
+.agent-body { background: #fff; color: #181818; border-radius: 8px; padding: 0.75rem; }
+.sug { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.8rem; }
+.av { width: 22px; height: 22px; border-radius: 50%; background: #0176D3; color: #fff; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
+.agent ol { padding-left: 1.2rem; font-size: 0.8rem; }

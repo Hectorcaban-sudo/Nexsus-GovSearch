@@ -1,0 +1,30 @@
+.console { background: #f3f3f3; min-height: 100%; }
+.top-bar { background: #032d60; color: #fff; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.top-bar h1 { margin: 0; font-size: 1.4rem; }
+.subtitle { margin: 0.25rem 0 0; opacity: 0.85; font-size: 0.85rem; }
+.search-box { width: 420px; }
+.results-header { padding: 0.75rem 1.5rem; background: #fff; border-bottom: 1px solid #e5e5e5; }
+.count { font-weight: 600; }
+.table-wrap { background: #fff; margin: 0 1.5rem; border: 1px solid #e5e5e5; border-radius: 6px; overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { text-align: left; padding: 0.6rem 0.75rem; background: #fafafa; border-bottom: 1px solid #e5e5e5; font-weight: 600; }
+td { padding: 0.55rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+.score { background: #e8f5e9; color: #1b5e20; padding: 0.1rem 0.45rem; border-radius: 4px; font-weight: 600; }
+.panels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; padding: 1.25rem 1.5rem; }
+.panel { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; }
+.panel h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+.muted { color: #706e6b; font-size: 0.75rem; margin: 0 0 0.75rem; }
+.bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; font-size: 0.8rem; }
+.year { width: 60px; }
+.bar { height: 8px; background: #0176D3; border-radius: 4px; flex: 1; max-width: 120px; }
+.val { width: 50px; text-align: right; }
+.total { margin-top: 0.75rem; font-size: 0.85rem; }
+.comp-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.85rem; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #0176D3; }
+.name { flex: 1; }
+.pct { width: 40px; text-align: right; }
+.partner { padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0; }
+.pname { font-weight: 600; }
+.match { color: #2e844a; font-size: 0.75rem; margin-left: 0.35rem; }
+.pmeta { font-size: 0.75rem; color: #706e6b; }
+.pscore { font-weight: 700; color: #0176D3; }

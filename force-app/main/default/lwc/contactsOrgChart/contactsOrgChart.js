@@ -1,38 +1,23 @@
 import { LightningElement } from 'lwc';
 
-const CONTACT_COLUMNS = [
-    { label: 'Name', fieldName: 'name', type: 'text' },
-    { label: 'Title', fieldName: 'title', type: 'text' },
-    { label: 'Phone / Email', fieldName: 'contact', type: 'text' },
-    { label: 'Influence Rating', fieldName: 'influence', type: 'text' }
-];
-
 export default class ContactsOrgChart extends LightningElement {
-    contactColumns = CONTACT_COLUMNS;
-
-    hierarchy = [
-        { id: '1', name: 'Department of Defense', count: 128, style: '' },
-        { id: '2', name: 'Army', count: 45, style: 'margin-left: 1rem' },
-        { id: '3', name: 'Office of the Secretary of the Army', count: 18, style: 'margin-left: 2rem' },
-        { id: '4', name: 'Assistant Secretary of the Army (ALT)', count: 12, style: 'margin-left: 3rem' },
-        { id: '5', name: 'PEO Combat Systems', count: 6, style: 'margin-left: 3rem' }
-    ];
-
     contacts = [
-        { id: 'c1', name: 'The Honorable Christine Wormuth', title: 'Secretary of the Army', contact: '(703) 695-3211', influence: 'High' },
-        { id: 'c2', name: 'Mr. Douglas Bush', title: 'Assistant Secretary of the Army (ALT)', contact: '(703) 695-3100', influence: 'High' },
-        { id: 'c3', name: 'LTG Gary M. Brito', title: 'Deputy Chief of Staff, G-8', contact: '(703) 693-5201', influence: 'Medium' },
-        { id: 'c4', name: 'Ms. Jodi S. Johnson', title: 'Deputy Assistant Secretary (Procurement)', contact: '(703) 695-6515', influence: 'Medium' }
+        { id: 1, initials: 'LD', name: 'Laura A. Dean', title: 'Program Executive Officer, PEO C3T', bio: '35+ years in Army acquisition and C4ISR; former PM for Tactical Radios.', influence: 'High', stars: '★★★★★' },
+        { id: 2, initials: 'MT', name: 'Michael J. Talley', title: 'Deputy Program Executive Officer', bio: 'Former Brigade Commander and PM for Network Integration.', influence: 'High', stars: '★★★★★' },
+        { id: 3, initials: 'JP', name: 'Jennifer K. Pucino', title: 'Chief of Staff, PEO C3T', bio: 'Manages PEO operations and senior leader engagement.', influence: 'Medium', stars: '★★★☆☆' },
+        { id: 4, initials: 'DL', name: 'David R. Lewis', title: 'Project Manager, PM Tactical Network', bio: 'Oversees tactical network modernization programs.', influence: 'Medium', stars: '★★★☆☆' },
+        { id: 5, initials: 'SW', name: 'Scott A. Williams', title: 'Product Director, PdM WESS', bio: 'Technical lead for satellite communications capabilities.', influence: 'Low', stars: '★☆☆☆☆' }
     ];
 
-    influencers = [
-        { id: 'i1', name: 'Douglas Bush', role: 'Oversees acquisition, logistics & technology' },
-        { id: 'i2', name: 'Christine Wormuth', role: 'Sets strategic direction and Army modernization' },
-        { id: 'i3', name: 'Gary M. Brito', role: 'Shapes resource allocation and investment' }
-    ];
-
-    callPlan = [
-        { id: 'p1', name: 'Mr. Douglas Bush – Assistant Secretary (ALT)', objective: 'Discuss Army acquisition priorities and industry partnership. Timing: Within 2 weeks' },
-        { id: 'p2', name: 'LTG Gary M. Brito – G-8', objective: 'Understand FY26 budget priorities. Timing: Within 3–4 weeks' }
-    ];
+    get hierarchy() {
+        return [
+            { name: 'Department of Defense', children: [
+                { name: 'Army', children: [
+                    { name: 'ASA (ALT)', children: [
+                        { name: 'Program Executive Office (PEO) C3T' }
+                    ]}
+                ]}
+            ]}
+        ];
+    }
 }

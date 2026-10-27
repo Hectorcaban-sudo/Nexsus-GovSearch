@@ -1,0 +1,88 @@
+<template>
+    <div class="console">
+        <div class="top-bar">
+            <div>
+                <h1>Nexsus GovSearch</h1>
+                <p class="subtitle">Federal market intelligence and opportunity discovery</p>
+            </div>
+            <div class="search-box">
+                <lightning-input type="search" placeholder="Search awards, solicitations, agencies, NAICS..." value={searchTerm} onchange={handleSearch}></lightning-input>
+            </div>
+        </div>
+
+        <div class="results-header">
+            <span class="count">Results ({resultCount})</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Agency</th>
+                        <th>Type</th>
+                        <th>NAICS</th>
+                        <th>Value</th>
+                        <th>Score</th>
+                        <th>Due</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filtered} for:item="c">
+                        <tr key={c.Id}>
+                            <td>{c.Name}</td>
+                            <td>{c.Agency__c}</td>
+                            <td>{c.Candidate_Type__c}</td>
+                            <td>{c.NAICS__c}</td>
+                            <td><lightning-formatted-number value={c.Estimated_Value__c} format-style="currency" currency-code="USD"></lightning-formatted-number></td>
+                            <td><span class="score">{c.AI_Relevancy_Score__c}</span></td>
+                            <td>{c.Due_Date__c}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panels">
+            <div class="panel">
+                <h3>Market Spend</h3>
+                <p class="muted">Spend over time (demo)</p>
+                <div class="bars">
+                    <template for:each={spendYears} for:item="y">
+                        <div key={y.year} class="bar-row">
+                            <span class="year">{y.year}</span>
+                            <div class="bar" style={y.barStyle}></div>
+                            <span class="val">${y.value}B</span>
+                        </div>
+                    </template>
+                </div>
+                <p class="total">Total Spend (5 Years) <strong>$10.5B</strong></p>
+            </div>
+
+            <div class="panel">
+                <h3>Competitor Intelligence</h3>
+                <p class="muted">Top vendors by obligated dollars</p>
+                <template for:each={competitors} for:item="comp">
+                    <div key={comp.name} class="comp-row">
+                        <span class="dot" style={comp.dotStyle}></span>
+                        <span class="name">{comp.name}</span>
+                        <span class="pct">{comp.pct}%</span>
+                        <span class="val">{comp.value}</span>
+                    </div>
+                </template>
+            </div>
+
+            <div class="panel">
+                <h3>Partner Matchmaking</h3>
+                <p class="muted">Teaming candidates with past performance overlap</p>
+                <template for:each={partners} for:item="p">
+                    <div key={p.name} class="partner">
+                        <div class="pname">{p.name} <span class="match">{p.match}% Match</span></div>
+                        <div class="pmeta">Past Performance Overlap: {p.overlap} · {p.setAside}</div>
+                        <div class="pscore">{p.score}</div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

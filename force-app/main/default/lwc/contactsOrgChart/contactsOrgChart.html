@@ -1,55 +1,74 @@
 <template>
-    <div class="slds-grid slds-gutters">
-        <!-- Hierarchy Tree -->
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
-            <lightning-card title="Agency / Office Hierarchy" icon-name="standard:account">
-                <div class="slds-p-around_small">
-                    <template for:each={hierarchy} for:item="node">
-                        <div key={node.id} class="slds-m-bottom_x-small" style={node.style}>
-                            <lightning-icon icon-name="utility:folder" size="x-small" class="slds-m-right_x-small"></lightning-icon>
-                            {node.name}
-                            <span class="slds-badge slds-m-left_x-small">{node.count}</span>
-                        </div>
-                    </template>
-                </div>
-            </lightning-card>
+    <div class="wrap">
+        <div class="sidebar">
+            <h3>Agency / Office Hierarchy</h3>
+            <ul class="tree">
+                <li>Department of Defense
+                    <ul>
+                        <li>Army
+                            <ul>
+                                <li>Headquarters, Department of the Army</li>
+                                <li>ASA (ALT)
+                                    <ul>
+                                        <li class="active">Program Executive Office (PEO) C3T</li>
+                                        <li>PM Mission Command</li>
+                                        <li>PM Tactical Network</li>
+                                        <li>PM Enterprise Information Systems</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-
-        <!-- Contacts Table -->
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
-            <lightning-card title="Senior Decision-Maker Contacts" icon-name="standard:contact">
-                <div class="slds-p-around_medium">
-                    <lightning-datatable
-                        key-field="id"
-                        data={contacts}
-                        columns={contactColumns}
-                        hide-checkbox-column>
-                    </lightning-datatable>
+        <div class="main">
+            <h2>Contacts and Agency Org Chart</h2>
+            <div class="tabs"><span class="tab active">Contacts</span><span class="tab">Org Chart</span></div>
+            <div class="contact-list">
+                <template for:each={contacts} for:item="c">
+                    <div key={c.id} class="contact">
+                        <div class="avatar">{c.initials}</div>
+                        <div class="info">
+                            <div class="cname">{c.name}</div>
+                            <div class="ctitle">{c.title}</div>
+                            <div class="cbio">{c.bio}</div>
+                        </div>
+                        <div class="influence">
+                            <div class="stars">{c.stars}</div>
+                            <div class="ilabel">{c.influence}</div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div class="org">
+                <h3>Program Executive Office (PEO) C3T – Org Chart</h3>
+                <div class="org-box">PEO C3T<br/>Laura A. Dean</div>
+                <div class="org-row">
+                    <div class="org-box">Deputy PEO<br/>Michael J. Talley</div>
+                    <div class="org-box">Chief of Staff<br/>Jennifer K. Pucino</div>
+                    <div class="org-box">PM Tactical Network<br/>David R. Lewis</div>
                 </div>
-            </lightning-card>
+            </div>
         </div>
-
-        <!-- Agent-style panel -->
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
-            <lightning-card title="Research & Relationship Agent" icon-name="custom:custom19">
-                <div class="slds-p-around_medium">
-                    <p class="slds-text-body_small slds-m-bottom_medium">AI Agent for Government Relations</p>
-                    <h3 class="slds-text-heading_small">Key Influencers Identified</h3>
-                    <template for:each={influencers} for:item="inf">
-                        <div key={inf.id} class="slds-m-bottom_small">
-                            <strong>{inf.name}</strong><br/>
-                            <span class="slds-text-color_weak">{inf.role}</span>
-                        </div>
-                    </template>
-                    <h3 class="slds-text-heading_small slds-m-top_medium">Recommended Call Plan</h3>
-                    <template for:each={callPlan} for:item="plan">
-                        <div key={plan.id} class="slds-m-bottom_small">
-                            <strong>{plan.name}</strong><br/>
-                            <span class="slds-text-color_weak">{plan.objective}</span>
-                        </div>
-                    </template>
-                </div>
-            </lightning-card>
+        <div class="agent">
+            <div class="agent-header">Agentforce<br/>Research &amp; Relationship Agent</div>
+            <div class="agent-body">
+                <h4>Suggested Key Influencers</h4>
+                <template for:each={contacts} for:item="c">
+                    <div key={c.id} class="sug">
+                        <span class="av">{c.initials}</span>
+                        <span>{c.name}</span>
+                        <span class="stars">{c.stars}</span>
+                    </div>
+                </template>
+                <h4>Recommended Call Plan</h4>
+                <ol>
+                    <li>Opening: Reference PEO C3T priorities for tactical network modernization.</li>
+                    <li>Value: Highlight how our solution accelerates interoperability goals.</li>
+                    <li>Next Step: Request a 30-min technical deep dive with PM Tactical Network.</li>
+                </ol>
+            </div>
         </div>
     </div>
 </template>
