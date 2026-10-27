@@ -19,8 +19,24 @@ public with sharing class AdminConfigController {
     public static String loadSampleDatasets() {
         assertAdminAccess();
         try {
-            List<Pipeline_Candidate__c> toInsert = generateSampleCandidates(100);
-            return insertCandidates(toInsert);
+            // Built-in load still creates Pipeline Candidates
+            List<Pipeline_Candidate__c> toInsert = generateSampleCandidates(20);
+            String msg = insertCandidates(toInsert);
+            // Also ensure a Company Profile exists
+            if ([SELECT COUNT() FROM Company_Profile__c] == 0) {
+                Company_Profile__c p = new Company_Profile__c(
+                    Name = 'Nexsus Sample Company',
+                    Primary_NAICS__c = '541511;541512',
+                    Secondary_NAICS__c = '541519;541330',
+                    PSC_Codes__c = 'D399;R425',
+                    Set_Aside_Eligibility__c = 'Small Business',
+                    Vehicles_Held__c = 'GSA MAS;CIO-SP3',
+                    Target_Agencies__c = 'Department of Defense;Department of Veterans Affairs'
+                );
+                insert p;
+                msg += ' Created Company Profile.';
+            }
+            return msg;
         } catch (Exception e) {
             IntegrationLogger.error(SOURCE, e);
             throw new AuraHandledException('Failed to load sample data: ' + e.getMessage());
@@ -34,35 +50,105 @@ public with sharing class AdminConfigController {
             throw new AuraHandledException('JSON content is empty.');
         }
         try {
-            List<Object> raw = (List<Object>) JSON.deserializeUntyped(jsonContent);
-            List<Pipeline_Candidate__c> toInsert = new List<Pipeline_Candidate__c>();
-            for (Object o : raw) {
-                Map<String, Object> m = (Map<String, Object>) o;
-                Pipeline_Candidate__c c = new Pipeline_Candidate__c();
-                c.Name = (String) m.get('Name');
-                c.External_Id__c = (String) m.get('External_Id__c');
-                c.Agency__c = (String) m.get('Agency__c');
-                c.Candidate_Type__c = (String) m.get('Candidate_Type__c');
-                c.NAICS__c = (String) m.get('NAICS__c');
-                if (m.get('Estimated_Value__c') != null) {
-                    c.Estimated_Value__c = Decimal.valueOf(String.valueOf(m.get('Estimated_Value__c')));
-                }
-                if (m.get('Due_Date__c') != null) {
-                    c.Due_Date__c = Date.valueOf((String) m.get('Due_Date__c'));
-                }
-                c.Source_System__c = (String) m.get('Source_System__c');
-                if (String.isBlank(c.Source_System__c)) c.Source_System__c = 'Sample';
-                c.Status__c = (String) m.get('Status__c');
-                if (String.isBlank(c.Status__c)) c.Status__c = 'New';
-                c.Triage_Status__c = (String) m.get('Triage_Status__c');
-                if (String.isBlank(c.Triage_Status__c)) c.Triage_Status__c = 'New';
-                toInsert.add(c);
+            Object parsed = JSON.deserializeUntyped(jsonContent);
+            if (parsed instanceof List<Object>) {
+                // Legacy: array of Pipeline Candidates only
+                return loadCandidateList((List<Object>) parsed);
+            } else if (parsed instanceof Map<String, Object>) {
+                return loadMultiObject((Map<String, Object>) parsed);
             }
-            return insertCandidates(toInsert);
+            throw new AuraHandledException('JSON must be an object keyed by API name or an array of candidates.');
         } catch (Exception e) {
             IntegrationLogger.error(SOURCE, e);
             throw new AuraHandledException('Failed to parse or load JSON: ' + e.getMessage());
         }
+    }
+
+    private static String loadMultiObject(Map<String, Object> data) {
+        Integer total = 0;
+        List<String> messages = new List<String>();
+
+        // Company Profile (singleton)
+        if (data.containsKey('Company_Profile__c')) {
+            List<Object> rows = (List<Object>) data.get('Company_Profile__c');
+            if (!rows.isEmpty() && [SELECT COUNT() FROM Company_Profile__c] == 0) {
+                Map<String, Object> m = (Map<String, Object>) rows[0];
+                Company_Profile__c p = new Company_Profile__c();
+                p.Name = (String) m.get('Name');
+                p.Primary_NAICS__c = (String) m.get('Primary_NAICS__c');
+                p.Secondary_NAICS__c = (String) m.get('Secondary_NAICS__c');
+                p.PSC_Codes__c = (String) m.get('PSC_Codes__c');
+                p.Set_Aside_Eligibility__c = (String) m.get('Set_Aside_Eligibility__c');
+                p.Vehicles_Held__c = (String) m.get('Vehicles_Held__c');
+                p.Target_Agencies__c = (String) m.get('Target_Agencies__c');
+                insert p;
+                total++;
+                messages.add('Company Profile');
+            }
+        }
+
+        // Pipeline Candidates
+        if (data.containsKey('Pipeline_Candidate__c')) {
+            String r = loadCandidateList((List<Object>) data.get('Pipeline_Candidate__c'));
+            messages.add(r);
+        }
+
+        // Other objects (insert with Name only or simple fields)
+        Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
+        for (String apiName : data.keySet()) {
+            if (apiName == 'Company_Profile__c' || apiName == 'Pipeline_Candidate__c') continue;
+            if (!gd.containsKey(apiName)) continue;
+            List<Object> rows = (List<Object>) data.get(apiName);
+            List<SObject> toInsert = new List<SObject>();
+            for (Object o : rows) {
+                Map<String, Object> m = (Map<String, Object>) o;
+                SObject sobj = gd.get(apiName).newSObject();
+                if (m.containsKey('Name')) sobj.put('Name', (String) m.get('Name'));
+                for (String key : m.keySet()) {
+                    if (key == 'Name') continue;
+                    try { sobj.put(key, m.get(key)); } catch (Exception e) { /* skip invalid */ }
+                }
+                toInsert.add(sobj);
+            }
+            if (!toInsert.isEmpty()) {
+                Database.SaveResult[] results = Database.insert(toInsert, false);
+                Integer ok = 0;
+                for (Database.SaveResult sr : results) if (sr.isSuccess()) ok++;
+                total += ok;
+                messages.add(apiName + ': ' + ok);
+            }
+        }
+
+        String msg = 'Loaded multi-object sample data. ' + String.join(messages, '; ');
+        IntegrationLogger.info(SOURCE, msg);
+        return msg;
+    }
+
+    private static String loadCandidateList(List<Object> raw) {
+        List<Pipeline_Candidate__c> toInsert = new List<Pipeline_Candidate__c>();
+        for (Object o : raw) {
+            Map<String, Object> m = (Map<String, Object>) o;
+            Pipeline_Candidate__c c = new Pipeline_Candidate__c();
+            c.Name = (String) m.get('Name');
+            c.External_Id__c = (String) m.get('External_Id__c');
+            c.Agency__c = (String) m.get('Agency__c');
+            c.Candidate_Type__c = (String) m.get('Candidate_Type__c');
+            c.NAICS__c = (String) m.get('NAICS__c');
+            if (m.get('Estimated_Value__c') != null) {
+                c.Estimated_Value__c = Decimal.valueOf(String.valueOf(m.get('Estimated_Value__c')));
+            }
+            if (m.get('Due_Date__c') != null) {
+                c.Due_Date__c = Date.valueOf((String) m.get('Due_Date__c'));
+            }
+            c.Source_System__c = (String) m.get('Source_System__c');
+            if (String.isBlank(c.Source_System__c)) c.Source_System__c = 'Sample';
+            c.Status__c = (String) m.get('Status__c');
+            if (String.isBlank(c.Status__c)) c.Status__c = 'New';
+            c.Triage_Status__c = (String) m.get('Triage_Status__c');
+            if (String.isBlank(c.Triage_Status__c)) c.Triage_Status__c = 'New';
+            toInsert.add(c);
+        }
+        return insertCandidates(toInsert);
     }
 
     @AuraEnabled
