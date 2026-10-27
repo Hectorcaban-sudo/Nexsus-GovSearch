@@ -1,0 +1,46 @@
+<template>
+    <lightning-card title="Nexsus GovSearch Admin Configuration" icon-name="utility:settings">
+        <div class="slds-p-around_medium">
+            <template if:true={status}>
+                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                    <div class="slds-col">
+                        <div class="slds-text-title">Pipeline Candidates</div>
+                        <div class="slds-text-heading_medium">{status.candidateCount}</div>
+                    </div>
+                    <div class="slds-col">
+                        <div class="slds-text-title">Company Profiles</div>
+                        <div class="slds-text-heading_medium">{status.companyProfileCount}</div>
+                    </div>
+                </div>
+            </template>
+
+            <div class="slds-m-bottom_medium">
+                <lightning-button label="Load 100 Sample Datasets" variant="brand" onclick={handleLoadSample} disabled={isLoading}></lightning-button>
+                <lightning-button label="Clear Sample Data" variant="destructive" onclick={handleClearSample} disabled={isLoading} class="slds-m-left_small"></lightning-button>
+                <lightning-button label="Refresh Scores" variant="neutral" onclick={handleRefreshScores} disabled={isLoading} class="slds-m-left_small"></lightning-button>
+            </div>
+
+            <template if:true={message}>
+                <div class="slds-notify slds-notify_alert slds-theme_success" role="alert">
+                    <h2>{message}</h2>
+                </div>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">
+                    <h2>{error}</h2>
+                </div>
+            </template>
+
+            <div class="slds-m-top_large">
+                <h3 class="slds-text-heading_small">Admin Actions</h3>
+                <ul class="slds-list_dotted slds-m-top_small">
+                    <li>Load sample data to verify scoring, triage, and dashboards without external ingestion.</li>
+                    <li>Clear sample data when finished testing.</li>
+                    <li>Refresh scores against the current Company Profile and Fit Rules.</li>
+                </ul>
+                <p class="slds-m-top_medium slds-text-body_small">This page is secured by the Nexsus Admin permission set and Nexsus_Admin_Access custom permission.</p>
+            </div>
+        </div>
+    </lightning-card>
+</template>
