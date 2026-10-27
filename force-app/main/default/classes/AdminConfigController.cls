@@ -19,22 +19,49 @@ public with sharing class AdminConfigController {
     public static String loadSampleDatasets() {
         assertAdminAccess();
         try {
-            // Sample data is loaded from the Static Resource or inline JSON
-            // For this implementation we generate 100 representative records
             List<Pipeline_Candidate__c> toInsert = generateSampleCandidates(100);
-            Database.SaveResult[] results = Database.insert(toInsert, false);
-            Integer success = 0;
-            Integer errors = 0;
-            for (Database.SaveResult sr : results) {
-                if (sr.isSuccess()) success++;
-                else errors++;
-            }
-            String msg = 'Loaded ' + success + ' sample Pipeline Candidates. Errors: ' + errors;
-            IntegrationLogger.info(SOURCE, msg);
-            return msg;
+            return insertCandidates(toInsert);
         } catch (Exception e) {
             IntegrationLogger.error(SOURCE, e);
             throw new AuraHandledException('Failed to load sample data: ' + e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static String uploadSampleDatasets(String jsonContent) {
+        assertAdminAccess();
+        if (String.isBlank(jsonContent)) {
+            throw new AuraHandledException('JSON content is empty.');
+        }
+        try {
+            List<Object> raw = (List<Object>) JSON.deserializeUntyped(jsonContent);
+            List<Pipeline_Candidate__c> toInsert = new List<Pipeline_Candidate__c>();
+            for (Object o : raw) {
+                Map<String, Object> m = (Map<String, Object>) o;
+                Pipeline_Candidate__c c = new Pipeline_Candidate__c();
+                c.Name = (String) m.get('Name');
+                c.External_Id__c = (String) m.get('External_Id__c');
+                c.Agency__c = (String) m.get('Agency__c');
+                c.Candidate_Type__c = (String) m.get('Candidate_Type__c');
+                c.NAICS__c = (String) m.get('NAICS__c');
+                if (m.get('Estimated_Value__c') != null) {
+                    c.Estimated_Value__c = Decimal.valueOf(String.valueOf(m.get('Estimated_Value__c')));
+                }
+                if (m.get('Due_Date__c') != null) {
+                    c.Due_Date__c = Date.valueOf((String) m.get('Due_Date__c'));
+                }
+                c.Source_System__c = (String) m.get('Source_System__c');
+                if (String.isBlank(c.Source_System__c)) c.Source_System__c = 'Sample';
+                c.Status__c = (String) m.get('Status__c');
+                if (String.isBlank(c.Status__c)) c.Status__c = 'New';
+                c.Triage_Status__c = (String) m.get('Triage_Status__c');
+                if (String.isBlank(c.Triage_Status__c)) c.Triage_Status__c = 'New';
+                toInsert.add(c);
+            }
+            return insertCandidates(toInsert);
+        } catch (Exception e) {
+            IntegrationLogger.error(SOURCE, e);
+            throw new AuraHandledException('Failed to parse or load JSON: ' + e.getMessage());
         }
     }
 
@@ -62,6 +89,19 @@ public with sharing class AdminConfigController {
         assertAdminAccess();
         PipelineScoutService.refreshScores();
         return 'Scoring refresh initiated for recent candidates.';
+    }
+
+    private static String insertCandidates(List<Pipeline_Candidate__c> toInsert) {
+        Database.SaveResult[] results = Database.insert(toInsert, false);
+        Integer success = 0;
+        Integer errors = 0;
+        for (Database.SaveResult sr : results) {
+            if (sr.isSuccess()) success++;
+            else errors++;
+        }
+        String msg = 'Loaded ' + success + ' Pipeline Candidates. Errors: ' + errors;
+        IntegrationLogger.info(SOURCE, msg);
+        return msg;
     }
 
     private static void assertAdminAccess() {
