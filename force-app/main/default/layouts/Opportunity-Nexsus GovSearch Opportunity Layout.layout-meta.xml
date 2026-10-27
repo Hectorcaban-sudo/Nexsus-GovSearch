@@ -26,6 +26,10 @@
                 <behavior>Edit</behavior>
                 <field>CloseDate</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Probability</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
