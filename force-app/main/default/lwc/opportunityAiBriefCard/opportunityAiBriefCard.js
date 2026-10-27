@@ -17,7 +17,7 @@ export default class OpportunityAiBriefCard extends LightningElement {
     opportunity;
 
     get score() {
-        return getFieldValue(this.opportunity.data, AI_SCORE) || '—';
+        return getFieldValue(this.opportunity.data, AI_SCORE) || 0;
     }
 
     get strategicFit() {
@@ -45,5 +45,22 @@ export default class OpportunityAiBriefCard extends LightningElement {
         if (s >= 90) return 'slds-text-color_success';
         if (s >= 75) return 'slds-text-color_warning';
         return '';
+    }
+
+    get scoreStyle() {
+        return `width: ${this.score}%`;
+    }
+
+    // Placeholder structured sections — replace with real Agentforce output
+    get incumbentStrengths() {
+        return 'Incumbent holds strong position with deep agency knowledge and established relationships.';
+    }
+
+    get competitiveWhitespace() {
+        return 'Opportunity exists in cloud-native modernization, zero-trust architecture, and data analytics capabilities.';
+    }
+
+    get pursuitPrioritization() {
+        return `Score: ${this.score}/100 – ${this.priority} strategic fit. Recommend early positioning and teaming.`;
     }
 }

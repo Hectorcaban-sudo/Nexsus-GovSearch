@@ -1,28 +1,46 @@
 <template>
     <lightning-card title="AI Opportunity Brief" icon-name="custom:custom19">
         <div class="slds-p-around_medium">
-            <div class="slds-grid slds-gutters slds-wrap">
+            <!-- Score + Key Fields -->
+            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                    <p class="slds-text-title_caps">AI Relevancy Score</p>
-                    <p class="slds-text-heading_large {scoreClass}">{score}</p>
+                    <p class="slds-text-title_caps">Relevancy Score</p>
+                    <p class="slds-text-heading_large {scoreClass}">{score} / 100</p>
+                    <div class="slds-progress-bar slds-m-top_x-small" aria-valuemin="0" aria-valuemax="100" aria-valuenow={score} role="progressbar">
+                        <span class="slds-progress-bar__value" style={scoreStyle}></span>
+                    </div>
                 </div>
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                    <p class="slds-text-title_caps">Strategic Fit</p>
-                    <p class="slds-text-heading_medium">{strategicFit}</p>
-                </div>
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                    <p class="slds-text-title_caps">Pursuit Priority</p>
+                    <p class="slds-text-title_caps">Priority</p>
                     <p class="slds-text-heading_medium">{priority}</p>
                 </div>
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-top_small">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
                     <p class="slds-text-title_caps">Incumbent</p>
-                    <p>{incumbent}</p>
+                    <p class="slds-text-heading_medium">{incumbent}</p>
                 </div>
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-top_small">
-                    <p class="slds-text-title_caps">NAICS Tags</p>
+                <div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                    <p class="slds-text-title_caps">NAICS Codes</p>
                     <p>{naics}</p>
                 </div>
             </div>
+
+            <!-- Structured Brief -->
+            <div class="slds-grid slds-gutters slds-wrap slds-border_top slds-p-top_medium">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <h3 class="slds-text-heading_small">Incumbent Strengths</h3>
+                    <p class="slds-m-top_small">{incumbentStrengths}</p>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <h3 class="slds-text-heading_small">Competitive Whitespace</h3>
+                    <p class="slds-m-top_small">{competitiveWhitespace}</p>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <h3 class="slds-text-heading_small">Pursuit Prioritization</h3>
+                    <p class="slds-m-top_small">{pursuitPrioritization}</p>
+                </div>
+            </div>
+
+            <!-- Full Brief -->
             <div class="slds-m-top_medium slds-border_top slds-p-top_medium">
                 <p class="slds-text-title_caps">AI Brief Summary</p>
                 <div class="slds-m-top_small">
