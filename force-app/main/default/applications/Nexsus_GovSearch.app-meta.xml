@@ -18,4 +18,40 @@
     <tabs>Government_Contact__c</tabs>
     <tabs>Admin_Configuration</tabs>
     <uiType>Lightning</uiType>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>App default record page</comment>
+        <content>Pipeline_Candidate_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Pipeline_Candidate__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>App default record page</comment>
+        <content>Solicitation_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Solicitation__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>App default record page</comment>
+        <content>Award_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Award__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>App default record page</comment>
+        <content>Government_Contact_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Government_Contact__c</pageOrSobjectType>
+    </actionOverrides>
 </CustomApplication>
