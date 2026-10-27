@@ -1,14 +1,14 @@
 <template>
-    <lightning-card title="Top AI-Scored Opportunities" icon-name="custom:custom63">
-        <template if:true={opportunities}>
+    <lightning-card title="Top AI-Scored Pipeline Candidates" icon-name="custom:custom63">
+        <template if:true={candidates}>
             <ul class="slds-list_dotted">
-                <template for:each={opportunities} for:item="opp">
-                    <li key={opp.Id}>{opp.Name}</li>
+                <template for:each={candidates} for:item="c">
+                    <li key={c.Id}>{c.Name} — {c.AI_Relevancy_Score__c}</li>
                 </template>
             </ul>
         </template>
         <template if:true={error}>
-            <p class="slds-text-color_error">Unable to load opportunities.</p>
+            <p class="slds-text-color_error">Unable to load candidates.</p>
         </template>
     </lightning-card>
 </template>
