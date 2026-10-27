@@ -21,13 +21,12 @@
             </div>
 
             <div class="slds-m-bottom_medium">
-                <lightning-file-upload
-                    label="Upload Sample JSON"
-                    name="sampleJson"
-                    accept=".json"
-                    onuploadfinished={handleUploadFinished}
-                    disabled={isLoading}>
-                </lightning-file-upload>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Upload Sample JSON</label>
+                    <div class="slds-form-element__control">
+                        <input type="file" accept=".json" onchange={handleFileChange} disabled={isLoading} class="slds-file-selector__input" />
+                    </div>
+                </div>
                 <p class="slds-text-body_small slds-m-top_x-small">Upload a JSON file matching docs/sample-datasets.json. Records are created with Source_System__c = Sample.</p>
             </div>
 
