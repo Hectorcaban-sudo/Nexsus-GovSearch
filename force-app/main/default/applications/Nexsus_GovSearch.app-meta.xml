@@ -16,5 +16,6 @@
     <tabs>Solicitation__c</tabs>
     <tabs>Award__c</tabs>
     <tabs>Government_Contact__c</tabs>
+    <tabs>Admin_Configuration</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>
