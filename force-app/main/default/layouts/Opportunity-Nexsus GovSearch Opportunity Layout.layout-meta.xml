@@ -41,7 +41,7 @@
                 <field>Strategic_Fit__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>Weighted_Value__c</field>
             </layoutItems>
             <layoutItems>
