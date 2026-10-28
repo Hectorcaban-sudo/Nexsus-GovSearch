@@ -39,62 +39,62 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Agency__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Agency__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Candidate_Type__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Candidate_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.NAICS__c</field>
+        <field>NGSR_Pipeline_Candidate__c.NAICS__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Estimated_Value__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Estimated_Value__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Due_Date__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Due_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.External_Id__c</field>
+        <field>NGSR_Pipeline_Candidate__c.External_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Source_System__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Source_System__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Status__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Triage_Status__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Triage_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.AI_Relevancy_Score__c</field>
+        <field>NGSR_Pipeline_Candidate__c.AI_Relevancy_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Strategic_Fit__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Strategic_Fit__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_Pipeline_Candidates.Score_Reasons__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Score_Reasons__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <objectPermissions>
@@ -103,7 +103,7 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
-        <object>NGSR_Pipeline_Candidates</object>
+        <object>NGSR_Pipeline_Candidate__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <objectPermissions>

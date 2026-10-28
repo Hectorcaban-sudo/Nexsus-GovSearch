@@ -9,7 +9,7 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
-        <object>NGSR_Pipeline_Candidates</object>
+        <object>NGSR_Pipeline_Candidate__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
