@@ -1,16 +1,16 @@
 import { LightningElement, api, wire } from 'lwc';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
-import NAME_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Name';
-import AGENCY_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Agency__c';
-import TYPE_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Candidate_Type__c';
-import VALUE_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Estimated_Value__c';
-import SCORE_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.AI_Relevancy_Score__c';
-import FIT_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Strategic_Fit__c';
-import STATUS_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Status__c';
-import DUE_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Due_Date__c';
-import TRIAGE_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Triage_Status__c';
-import REASONS_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.Score_Reasons__c';
-import NAICS_FIELD from '@salesforce/schema/NGSR_NGSR_Pipeline_Candidate__c.NAICS__c';
+import NAME_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Name';
+import AGENCY_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Agency__c';
+import TYPE_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Candidate_Type__c';
+import VALUE_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Estimated_Value__c';
+import SCORE_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.AI_Relevancy_Score__c';
+import FIT_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Strategic_Fit__c';
+import STATUS_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Status__c';
+import DUE_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Due_Date__c';
+import TRIAGE_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Triage_Status__c';
+import REASONS_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.Score_Reasons__c';
+import NAICS_FIELD from '@salesforce/schema/NGSR_Pipeline_Candidate__c.NAICS__c';
 
 const FIELDS = [NAME_FIELD, AGENCY_FIELD, TYPE_FIELD, VALUE_FIELD, SCORE_FIELD, FIT_FIELD, STATUS_FIELD, DUE_FIELD, TRIAGE_FIELD, REASONS_FIELD, NAICS_FIELD];
 

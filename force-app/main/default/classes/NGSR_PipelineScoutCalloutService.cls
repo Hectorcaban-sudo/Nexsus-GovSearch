@@ -43,11 +43,11 @@ public with sharing class NGSR_PipelineScoutCalloutService {
                 return;
             }
 
-            List<NGSR_NGSR_Pipeline_Candidate__c> toUpsert = new List<NGSR_NGSR_Pipeline_Candidate__c>();
+            List<NGSR_Pipeline_Candidate__c> toUpsert = new List<NGSR_Pipeline_Candidate__c>();
             for (Object item : items) {
                 try {
                     Map<String, Object> data = (Map<String, Object>) item;
-                    NGSR_NGSR_Pipeline_Candidate__c pc = mapToCandidate(data);
+                    NGSR_Pipeline_Candidate__c pc = mapToCandidate(data);
                     if (pc != null) {
                         toUpsert.add(pc);
                     }
@@ -63,7 +63,7 @@ public with sharing class NGSR_PipelineScoutCalloutService {
 
             Database.UpsertResult[] results = Database.upsert(
                 toUpsert,
-                NGSR_NGSR_Pipeline_Candidate__c.External_Id__c,
+                NGSR_Pipeline_Candidate__c.External_Id__c,
                 false
             );
 
@@ -93,11 +93,11 @@ public with sharing class NGSR_PipelineScoutCalloutService {
         }
     }
 
-    private static NGSR_NGSR_Pipeline_Candidate__c mapToCandidate(Map<String, Object> data) {
+    private static NGSR_Pipeline_Candidate__c mapToCandidate(Map<String, Object> data) {
         String externalId = (String) data.get('noticeId');
         if (String.isBlank(externalId)) return null;
 
-        NGSR_NGSR_Pipeline_Candidate__c pc = new NGSR_NGSR_Pipeline_Candidate__c();
+        NGSR_Pipeline_Candidate__c pc = new NGSR_Pipeline_Candidate__c();
         pc.External_Id__c = externalId;
         pc.Name = truncate((String) data.get('title'), 80);
         pc.Agency__c = truncate((String) data.get('department'), 255);

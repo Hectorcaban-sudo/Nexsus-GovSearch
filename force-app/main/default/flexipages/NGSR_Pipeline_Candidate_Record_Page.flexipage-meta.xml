@@ -11,7 +11,7 @@
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Pipeline Candidate Record Page</masterLabel>
-    <sobjectType>NGSR_NGSR_Pipeline_Candidate__c</sobjectType>
+    <sobjectType>NGSR_Pipeline_Candidate__c</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>

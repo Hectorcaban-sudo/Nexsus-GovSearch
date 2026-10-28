@@ -5,7 +5,7 @@
         <name>main</name><type>Region</type>
     </flexiPageRegions>
     <masterLabel>Solicitation Record Page</masterLabel>
-    <sobjectType>NGSR_NGSR_Solicitation__c</sobjectType>
+    <sobjectType>NGSR_Solicitation__c</sobjectType>
     <template><name>flexipage:recordHomeTemplateDesktop</name></template>
     <type>RecordPage</type>
 </FlexiPage>

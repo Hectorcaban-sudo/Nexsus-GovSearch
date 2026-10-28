@@ -10,7 +10,7 @@
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
             <objects>
-                <object>NGSR_NGSR_Pipeline_Candidate__c</object>
+                <object>NGSR_Pipeline_Candidate__c</object>
             </objects>
         </targetConfig>
     </targetConfigs>

@@ -6,18 +6,18 @@ public with sharing class NGSR_ResearchRelationshipService {
     private static final String SOURCE = 'NGSR_ResearchRelationshipService';
 
     @AuraEnabled(cacheable=true)
-    public static List<NGSR_NGSR_Government_Contact__c> getKeyInfluencers(String agency) {
+    public static List<NGSR_Government_Contact__c> getKeyInfluencers(String agency) {
         try {
             return [
                 SELECT Id, Name, Title__c, Influence_Rating__c, Bio_Snippet__c
-                FROM NGSR_NGSR_Government_Contact__c
+                FROM NGSR_Government_Contact__c
                 WHERE Influence_Rating__c IN ('High', 'Medium')
                 ORDER BY Influence_Rating__c
                 LIMIT 10
             ];
         } catch (Exception e) {
             NGSR_IntegrationLogger.error(SOURCE, e);
-            return new List<NGSR_NGSR_Government_Contact__c>();
+            return new List<NGSR_Government_Contact__c>();
         }
     }
 

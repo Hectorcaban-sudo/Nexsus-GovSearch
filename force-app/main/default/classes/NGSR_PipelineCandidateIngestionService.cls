@@ -75,7 +75,7 @@ global with sharing class NGSR_PipelineCandidateIngestionService {
             response.totalReceived = req.candidates.size();
             NGSR_IntegrationLogger.info(SOURCE, 'Received ' + response.totalReceived + ' candidates for ingestion');
 
-            List<NGSR_NGSR_Pipeline_Candidate__c> toUpsert = new List<NGSR_NGSR_Pipeline_Candidate__c>();
+            List<NGSR_Pipeline_Candidate__c> toUpsert = new List<NGSR_Pipeline_Candidate__c>();
             Map<String, String> externalIdToError = new Map<String, String>();
 
             for (CandidatePayload payload : req.candidates) {
@@ -86,7 +86,7 @@ global with sharing class NGSR_PipelineCandidateIngestionService {
                 }
 
                 try {
-                    NGSR_NGSR_Pipeline_Candidate__c pc = mapPayload(payload);
+                    NGSR_Pipeline_Candidate__c pc = mapPayload(payload);
                     toUpsert.add(pc);
                 } catch (Exception mapEx) {
                     response.errorCount++;
@@ -104,7 +104,7 @@ global with sharing class NGSR_PipelineCandidateIngestionService {
 
             Database.UpsertResult[] results = Database.upsert(
                 toUpsert,
-                NGSR_NGSR_Pipeline_Candidate__c.External_Id__c,
+                NGSR_Pipeline_Candidate__c.External_Id__c,
                 false
             );
 
@@ -150,8 +150,8 @@ global with sharing class NGSR_PipelineCandidateIngestionService {
         return response;
     }
 
-    private static NGSR_NGSR_Pipeline_Candidate__c mapPayload(CandidatePayload p) {
-        NGSR_NGSR_Pipeline_Candidate__c pc = new NGSR_NGSR_Pipeline_Candidate__c();
+    private static NGSR_Pipeline_Candidate__c mapPayload(CandidatePayload p) {
+        NGSR_Pipeline_Candidate__c pc = new NGSR_Pipeline_Candidate__c();
         pc.External_Id__c = p.externalId;
         pc.Name = truncate(p.name, 80);
         pc.Agency__c = truncate(p.agency, 255);

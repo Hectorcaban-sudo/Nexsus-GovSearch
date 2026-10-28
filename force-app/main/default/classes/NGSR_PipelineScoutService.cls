@@ -6,27 +6,27 @@ public with sharing class NGSR_PipelineScoutService {
     private static final String SOURCE = 'NGSR_PipelineScoutService';
 
     @AuraEnabled(cacheable=true)
-    public static List<NGSR_NGSR_Pipeline_Candidate__c> getTopCandidates() {
+    public static List<NGSR_Pipeline_Candidate__c> getTopCandidates() {
         try {
             return [
                 SELECT Id, Name, Agency__c, Candidate_Type__c, AI_Relevancy_Score__c,
                        Strategic_Fit__c, Estimated_Value__c, Status__c, Due_Date__c, NAICS__c,
                        Triage_Status__c, Score_Reasons__c
-                FROM NGSR_NGSR_Pipeline_Candidate__c
+                FROM NGSR_Pipeline_Candidate__c
                 ORDER BY AI_Relevancy_Score__c DESC NULLS LAST
                 LIMIT 25
             ];
         } catch (Exception e) {
             NGSR_IntegrationLogger.error(SOURCE, e);
-            return new List<NGSR_NGSR_Pipeline_Candidate__c>();
+            return new List<NGSR_Pipeline_Candidate__c>();
         }
     }
 
     @AuraEnabled
     public static void refreshScores() {
         try {
-            Set<Id> ids = new Map<Id, NGSR_NGSR_Pipeline_Candidate__c>([
-                SELECT Id FROM NGSR_NGSR_Pipeline_Candidate__c
+            Set<Id> ids = new Map<Id, NGSR_Pipeline_Candidate__c>([
+                SELECT Id FROM NGSR_Pipeline_Candidate__c
                 WHERE CreatedDate = LAST_N_DAYS:7
             ]).keySet();
             refreshScoresFor(ids);
@@ -51,14 +51,14 @@ public with sharing class NGSR_PipelineScoutService {
 
             List<Fit_Rule__mdt> rules = Fit_Rule__mdt.getAll().values();
 
-            List<NGSR_NGSR_Pipeline_Candidate__c> candidates = [
+            List<NGSR_Pipeline_Candidate__c> candidates = [
                 SELECT Id, Agency__c, NAICS__c, Estimated_Value__c, Candidate_Type__c,
                        AI_Relevancy_Score__c, Strategic_Fit__c, Score_Reasons__c
-                FROM NGSR_NGSR_Pipeline_Candidate__c
+                FROM NGSR_Pipeline_Candidate__c
                 WHERE Id IN :candidateIds
             ];
 
-            for (NGSR_NGSR_Pipeline_Candidate__c c : candidates) {
+            for (NGSR_Pipeline_Candidate__c c : candidates) {
                 ScoreResult result = calculateScore(c, profile, rules);
                 c.AI_Relevancy_Score__c = Math.min(result.score, 100);
                 c.Strategic_Fit__c = result.score >= 80 ? 'High' : (result.score >= 60 ? 'Medium' : 'Low');
@@ -83,7 +83,7 @@ public with sharing class NGSR_PipelineScoutService {
         List<String> reasons = new List<String>();
     }
 
-    private static ScoreResult calculateScore(NGSR_NGSR_Pipeline_Candidate__c c, NGSR_Company_Profile__c profile, List<Fit_Rule__mdt> rules) {
+    private static ScoreResult calculateScore(NGSR_Pipeline_Candidate__c c, NGSR_Company_Profile__c profile, List<Fit_Rule__mdt> rules) {
         ScoreResult result = new ScoreResult();
 
         // Company Profile direct matches
@@ -119,7 +119,7 @@ public with sharing class NGSR_PipelineScoutService {
         return result;
     }
 
-    private static Boolean matchesRule(NGSR_NGSR_Pipeline_Candidate__c c, Fit_Rule__mdt rule) {
+    private static Boolean matchesRule(NGSR_Pipeline_Candidate__c c, Fit_Rule__mdt rule) {
         if (rule.Target_Field__c == null || rule.Operator__c == null || rule.Value__c == null) return false;
 
         String fieldValue;

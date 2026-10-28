@@ -7,12 +7,12 @@ public with sharing class NGSR_AdminConfigController {
 
     // Custom objects to clear (Opportunity is intentionally excluded)
     private static final List<String> CLEAR_OBJECTS = new List<String>{
-        'NGSR_NGSR_Pipeline_Candidate__c',
+        'NGSR_Pipeline_Candidate__c',
         'NGSR_Company_Profile__c',
         'NGSR_Agency_Hierarchy__c',
-        'NGSR_NGSR_Government_Contact__c',
-        'NGSR_NGSR_Solicitation__c',
-        'NGSR_NGSR_Award__c',
+        'NGSR_Government_Contact__c',
+        'NGSR_Solicitation__c',
+        'NGSR_Award__c',
         'NGSR_Contract_Vehicle__c',
         'NGSR_Capture_Plan__c',
         'NGSR_Gate_Review__c',
@@ -30,7 +30,7 @@ public with sharing class NGSR_AdminConfigController {
     public static Map<String, Object> getAdminStatus() {
         assertAdminAccess();
         Map<String, Object> status = new Map<String, Object>();
-        status.put('candidateCount', safeCount('NGSR_NGSR_Pipeline_Candidate__c'));
+        status.put('candidateCount', safeCount('NGSR_Pipeline_Candidate__c'));
         status.put('companyProfileCount', safeCount('NGSR_Company_Profile__c'));
         status.put('hasCompanyProfile', safeCount('NGSR_Company_Profile__c') > 0);
         return status;
@@ -48,7 +48,7 @@ public with sharing class NGSR_AdminConfigController {
     public static String loadSampleDatasets() {
         assertAdminAccess();
         try {
-            List<NGSR_NGSR_Pipeline_Candidate__c> toInsert = generateSampleCandidates(20);
+            List<NGSR_Pipeline_Candidate__c> toInsert = generateSampleCandidates(20);
             String msg = insertCandidates(toInsert);
             if (safeCount('NGSR_Company_Profile__c') == 0) {
                 NGSR_Company_Profile__c p = new NGSR_Company_Profile__c(
@@ -110,14 +110,14 @@ public with sharing class NGSR_AdminConfigController {
             }
         }
 
-        if (data.containsKey('NGSR_NGSR_Pipeline_Candidate__c')) {
-            String r = loadCandidateList((List<Object>) data.get('NGSR_NGSR_Pipeline_Candidate__c'));
+        if (data.containsKey('NGSR_Pipeline_Candidate__c')) {
+            String r = loadCandidateList((List<Object>) data.get('NGSR_Pipeline_Candidate__c'));
             messages.add(r);
         }
 
         Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
         for (String apiName : data.keySet()) {
-            if (apiName == 'NGSR_Company_Profile__c' || apiName == 'NGSR_NGSR_Pipeline_Candidate__c') continue;
+            if (apiName == 'NGSR_Company_Profile__c' || apiName == 'NGSR_Pipeline_Candidate__c') continue;
             if (!gd.containsKey(apiName)) continue;
             List<Object> rows = (List<Object>) data.get(apiName);
             List<SObject> toInsert = new List<SObject>();
@@ -145,10 +145,10 @@ public with sharing class NGSR_AdminConfigController {
     }
 
     private static String loadCandidateList(List<Object> raw) {
-        List<NGSR_NGSR_Pipeline_Candidate__c> toInsert = new List<NGSR_NGSR_Pipeline_Candidate__c>();
+        List<NGSR_Pipeline_Candidate__c> toInsert = new List<NGSR_Pipeline_Candidate__c>();
         for (Object o : raw) {
             Map<String, Object> m = (Map<String, Object>) o;
-            NGSR_NGSR_Pipeline_Candidate__c c = new NGSR_NGSR_Pipeline_Candidate__c();
+            NGSR_Pipeline_Candidate__c c = new NGSR_Pipeline_Candidate__c();
             c.Name = (String) m.get('Name');
             if (m.get('External_Id__c') != null) c.External_Id__c = (String) m.get('External_Id__c');
             if (m.get('Agency__c') != null) c.Agency__c = (String) m.get('Agency__c');
@@ -198,7 +198,7 @@ public with sharing class NGSR_AdminConfigController {
         return 'Scoring refresh initiated for recent candidates.';
     }
 
-    private static String insertCandidates(List<NGSR_NGSR_Pipeline_Candidate__c> toInsert) {
+    private static String insertCandidates(List<NGSR_Pipeline_Candidate__c> toInsert) {
         Database.SaveResult[] results = Database.insert(toInsert, false);
         Integer success = 0;
         Integer errors = 0;
@@ -224,13 +224,13 @@ public with sharing class NGSR_AdminConfigController {
         }
     }
 
-    private static List<NGSR_NGSR_Pipeline_Candidate__c> generateSampleCandidates(Integer count) {
+    private static List<NGSR_Pipeline_Candidate__c> generateSampleCandidates(Integer count) {
         List<String> agencies = new List<String>{'Department of Defense', 'Department of Veterans Affairs', 'Department of Homeland Security', 'General Services Administration', 'Department of Health and Human Services', 'Department of Energy', 'NASA', 'Department of Justice'};
         List<String> types = new List<String>{'Recompete', 'Solicitation', 'Task Order'};
         List<String> naics = new List<String>{'541511', '541512', '541519', '541330', '541611', '541618'};
-        List<NGSR_NGSR_Pipeline_Candidate__c> records = new List<NGSR_NGSR_Pipeline_Candidate__c>();
+        List<NGSR_Pipeline_Candidate__c> records = new List<NGSR_Pipeline_Candidate__c>();
         for (Integer i = 1; i <= count; i++) {
-            NGSR_NGSR_Pipeline_Candidate__c c = new NGSR_NGSR_Pipeline_Candidate__c();
+            NGSR_Pipeline_Candidate__c c = new NGSR_Pipeline_Candidate__c();
             c.Name = 'Sample Opportunity ' + String.valueOf(i).leftPad(3, '0');
             c.External_Id__c = 'SAMPLE-' + String.valueOf(i).leftPad(4, '0');
             c.Agency__c = agencies[Math.mod(i, agencies.size())];

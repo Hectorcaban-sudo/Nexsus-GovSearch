@@ -39,62 +39,62 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Agency__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Agency__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Candidate_Type__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Candidate_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.NAICS__c</field>
+        <field>NGSR_Pipeline_Candidate__c.NAICS__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Estimated_Value__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Estimated_Value__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Due_Date__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Due_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.External_Id__c</field>
+        <field>NGSR_Pipeline_Candidate__c.External_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Source_System__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Source_System__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Status__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Triage_Status__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Triage_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.AI_Relevancy_Score__c</field>
+        <field>NGSR_Pipeline_Candidate__c.AI_Relevancy_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Strategic_Fit__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Strategic_Fit__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>NGSR_NGSR_Pipeline_Candidate__c.Score_Reasons__c</field>
+        <field>NGSR_Pipeline_Candidate__c.Score_Reasons__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <objectPermissions>
@@ -103,7 +103,7 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
-        <object>NGSR_NGSR_Pipeline_Candidate__c</object>
+        <object>NGSR_Pipeline_Candidate__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
@@ -125,19 +125,19 @@
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <tabSettings>
-        <tab>NGSR_NGSR_Pipeline_Candidate__c</tab>
+        <tab>NGSR_Pipeline_Candidate__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
-        <tab>NGSR_NGSR_Solicitation__c</tab>
+        <tab>NGSR_Solicitation__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
-        <tab>NGSR_NGSR_Award__c</tab>
+        <tab>NGSR_Award__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
-        <tab>NGSR_NGSR_Government_Contact__c</tab>
+        <tab>NGSR_Government_Contact__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

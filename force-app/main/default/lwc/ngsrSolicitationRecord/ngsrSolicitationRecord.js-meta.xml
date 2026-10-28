@@ -5,7 +5,7 @@
     <targets><target>lightning__RecordPage</target></targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
-            <objects><object>NGSR_NGSR_Solicitation__c</object></objects>
+            <objects><object>NGSR_Solicitation__c</object></objects>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

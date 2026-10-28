@@ -5,7 +5,7 @@
         <name>main</name><type>Region</type>
     </flexiPageRegions>
     <masterLabel>Award Record Page</masterLabel>
-    <sobjectType>NGSR_NGSR_Award__c</sobjectType>
+    <sobjectType>NGSR_Award__c</sobjectType>
     <template><name>flexipage:recordHomeTemplateDesktop</name></template>
     <type>RecordPage</type>
 </FlexiPage>

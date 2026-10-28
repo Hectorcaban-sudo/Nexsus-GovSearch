@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>NGSR_NGSR_Pipeline_Candidate__c</fullName>
+    <fullName>NGSR_Pipeline_Candidate__c</fullName>
     <label>Pipeline Candidate</label>
     <type>MasterDetail</type>
-    <referenceTo>NGSR_NGSR_Pipeline_Candidate__c</referenceTo>
+    <referenceTo>NGSR_Pipeline_Candidate__c</referenceTo>
     <relationshipLabel>Notice Versions</relationshipLabel>
     <relationshipName>Notice_Versions</relationshipName>
     <reparentableMasterDetail>false</reparentableMasterDetail>
