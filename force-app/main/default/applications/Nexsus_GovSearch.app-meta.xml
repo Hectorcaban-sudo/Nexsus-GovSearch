@@ -4,20 +4,12 @@
         <headerColor>#0176D3</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
-    <formFactors>Small</formFactors>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <label>Nexsus GovSearch</label>
     <navType>Standard</navType>
     <tabs>standard-home</tabs>
-    <tabs>Research_Console</tabs>
-    <tabs>Contacts_Org_Chart</tabs>
     <tabs>standard-Opportunity</tabs>
-    <tabs>Pipeline_Candidate__c</tabs>
-    <tabs>Solicitation__c</tabs>
-    <tabs>Award__c</tabs>
-    <tabs>Government_Contact__c</tabs>
-    <tabs>Admin_Configuration</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>
