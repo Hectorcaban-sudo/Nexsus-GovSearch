@@ -49,7 +49,7 @@ public with sharing class NGSR_PipelineScoutService {
             ];
             if (!profiles.isEmpty()) profile = profiles[0];
 
-            List<Fit_Rule__mdt> rules = Fit_Rule__mdt.getAll().values();
+            List<NGSR_Fit_Rule__mdt> rules = NGSR_Fit_Rule__mdt.getAll().values();
 
             List<NGSR_Pipeline_Candidate__c> candidates = [
                 SELECT Id, Agency__c, NAICS__c, Estimated_Value__c, Candidate_Type__c,
@@ -83,7 +83,7 @@ public with sharing class NGSR_PipelineScoutService {
         List<String> reasons = new List<String>();
     }
 
-    private static ScoreResult calculateScore(NGSR_Pipeline_Candidate__c c, NGSR_Company_Profile__c profile, List<Fit_Rule__mdt> rules) {
+    private static ScoreResult calculateScore(NGSR_Pipeline_Candidate__c c, NGSR_Company_Profile__c profile, List<NGSR_Fit_Rule__mdt> rules) {
         ScoreResult result = new ScoreResult();
 
         // Company Profile direct matches
@@ -104,7 +104,7 @@ public with sharing class NGSR_PipelineScoutService {
 
         // Evaluate Fit Rule criteria
         if (rules != null) {
-            for (Fit_Rule__mdt rule : rules) {
+            for (NGSR_Fit_Rule__mdt rule : rules) {
                 if (matchesRule(c, rule)) {
                     Integer weight = rule.Weight__c != null ? Integer.valueOf(rule.Weight__c) : 0;
                     result.score += weight;
@@ -119,7 +119,7 @@ public with sharing class NGSR_PipelineScoutService {
         return result;
     }
 
-    private static Boolean matchesRule(NGSR_Pipeline_Candidate__c c, Fit_Rule__mdt rule) {
+    private static Boolean matchesRule(NGSR_Pipeline_Candidate__c c, NGSR_Fit_Rule__mdt rule) {
         if (rule.Target_Field__c == null || rule.Operator__c == null || rule.Value__c == null) return false;
 
         String fieldValue;

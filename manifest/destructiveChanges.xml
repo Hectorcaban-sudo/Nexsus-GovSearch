@@ -72,7 +72,7 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>Fit_Rule__mdt</members>
+        <members>NGSR_Fit_Rule__mdt</members>
         <members>NGSR_Agency_Hierarchy__c</members>
         <members>NGSR_Award__c</members>
         <members>NGSR_Bid_Decision_Scorecard__c</members>
