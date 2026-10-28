@@ -1,5 +1,6 @@
 /**
  * Opportunity Intelligence service for AI brief generation.
+ * References Opportunity only — does not modify Opportunity fields.
  * Stubs for Agentforce actions.
  */
 public with sharing class NGSR_OpportunityIntelligenceService {
@@ -8,21 +9,21 @@ public with sharing class NGSR_OpportunityIntelligenceService {
     @AuraEnabled
     public static String generateBrief(Id opportunityId) {
         try {
+            // Reference only standard Opportunity fields
             Opportunity opp = [
-                SELECT Id, Name, Incumbent__c, AI_Relevancy_Score__c, Pursuit_Priority__c
+                SELECT Id, Name, StageName, Amount, CloseDate, Probability
                 FROM Opportunity
                 WHERE Id = :opportunityId
                 LIMIT 1
             ];
 
-            String brief = 'This opportunity represents a significant pursuit. ' +
-                (opp.Incumbent__c != null ? opp.Incumbent__c + ' is the incumbent. ' : '') +
-                'Score: ' + (opp.AI_Relevancy_Score__c != null ? String.valueOf(opp.AI_Relevancy_Score__c) : 'N/A') +
-                '. Recommend teaming and early stakeholder engagement.';
+            String brief = 'Opportunity: ' + opp.Name + '. ' +
+                'Stage: ' + opp.StageName + '. ' +
+                'Amount: ' + (opp.Amount != null ? String.valueOf(opp.Amount) : 'N/A') + '. ' +
+                'Close: ' + (opp.CloseDate != null ? String.valueOf(opp.CloseDate) : 'N/A') + '. ' +
+                'Recommend teaming and early stakeholder engagement.';
 
-            opp.AI_Brief_Summary__c = brief;
-            update opp;
-
+            // Do not update Opportunity — return the brief only
             NGSR_IntegrationLogger.info(SOURCE, 'Generated brief for Opportunity ' + opportunityId);
             return brief;
         } catch (Exception e) {
