@@ -5,6 +5,6 @@
     <type>MasterDetail</type>
     <referenceTo>Opportunity</referenceTo>
     <relationshipLabel>Bid Decision Scorecards</relationshipLabel>
-    <relationshipName>Bid_Decision_Scorecards</relationshipName>
+    <relationshipName>NGSR_Bid_Decision_Scorecards</relationshipName>
     <reparentableMasterDetail>false</reparentableMasterDetail>
 </CustomField>

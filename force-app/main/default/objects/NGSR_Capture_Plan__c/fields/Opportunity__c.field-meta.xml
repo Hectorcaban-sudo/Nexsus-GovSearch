@@ -5,6 +5,6 @@
     <type>MasterDetail</type>
     <referenceTo>Opportunity</referenceTo>
     <relationshipLabel>Capture Plans</relationshipLabel>
-    <relationshipName>Capture_Plans</relationshipName>
+    <relationshipName>NGSR_Capture_Plans</relationshipName>
     <reparentableMasterDetail>false</reparentableMasterDetail>
 </CustomField>

@@ -5,6 +5,6 @@
     <type>MasterDetail</type>
     <referenceTo>Opportunity</referenceTo>
     <relationshipLabel>Teaming Partners</relationshipLabel>
-    <relationshipName>Teaming_Partners</relationshipName>
+    <relationshipName>NGSR_Teaming_Partners</relationshipName>
     <reparentableMasterDetail>false</reparentableMasterDetail>
 </CustomField>

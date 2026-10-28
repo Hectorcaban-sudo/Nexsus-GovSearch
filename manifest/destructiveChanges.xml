@@ -5,7 +5,7 @@
         <members>NGSR_Award__c</members>
         <members>NGSR_Contacts_Org_Chart</members>
         <members>NGSR_Government_Contact__c</members>
-        <members>NGSR_Pipeline_Candidate__c</members>
+        <members>NGSR_Pipeline_Candidates</members>
         <members>NGSR_Research_Console</members>
         <members>NGSR_Solicitation__c</members>
         <name>CustomTab</name>
@@ -86,7 +86,7 @@
         <members>NGSR_Integration_Log__c</members>
         <members>NGSR_Notice_Version__c</members>
         <members>NGSR_Past_Performance_Profile__c</members>
-        <members>NGSR_Pipeline_Candidate__c</members>
+        <members>NGSR_Pipeline_Candidates</members>
         <members>NGSR_Saved_Search__c</members>
         <members>NGSR_Solicitation__c</members>
         <members>NGSR_Strategic_Objective__c</members>

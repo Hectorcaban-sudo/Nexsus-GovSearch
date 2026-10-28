@@ -4,7 +4,7 @@
     <label>Related Opportunity</label>
     <type>Lookup</type>
     <referenceTo>Opportunity</referenceTo>
-    <relationshipLabel>Pipeline Candidates</relationshipLabel>
-    <relationshipName>Pipeline_Candidates</relationshipName>
+    <relationshipLabel>NGSR Pipeline Candidates</relationshipLabel>
+    <relationshipName>NGSR_Pipeline_Candidates</relationshipName>
     <description>Opportunity created when this candidate is promoted.</description>
 </CustomField>

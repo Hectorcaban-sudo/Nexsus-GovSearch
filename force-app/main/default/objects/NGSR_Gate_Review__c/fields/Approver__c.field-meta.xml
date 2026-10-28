@@ -4,6 +4,6 @@
     <label>Approver</label>
     <type>Lookup</type>
     <referenceTo>User</referenceTo>
-    <relationshipLabel>Gate Reviews</relationshipLabel>
-    <relationshipName>Gate_Reviews</relationshipName>
+    <relationshipLabel>NGSR Gate Reviews Approver</relationshipLabel>
+    <relationshipName>NGSR_Gate_Reviews_Approver</relationshipName>
 </CustomField>

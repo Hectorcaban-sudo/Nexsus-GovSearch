@@ -5,5 +5,5 @@
     <type>Lookup</type>
     <referenceTo>Account</referenceTo>
     <relationshipLabel>Teaming Partnerships</relationshipLabel>
-    <relationshipName>Teaming_Partnerships</relationshipName>
+    <relationshipName>NGSR_Teaming_Partnerships</relationshipName>
 </CustomField>

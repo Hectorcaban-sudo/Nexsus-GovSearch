@@ -5,5 +5,5 @@
     <type>Lookup</type>
     <referenceTo>Opportunity</referenceTo>
     <relationshipLabel>Call Reports</relationshipLabel>
-    <relationshipName>Call_Reports</relationshipName>
+    <relationshipName>NGSR_Call_Reports</relationshipName>
 </CustomField>

@@ -4,7 +4,7 @@
     <label>Opportunity</label>
     <type>MasterDetail</type>
     <referenceTo>Opportunity</referenceTo>
-    <relationshipLabel>Gate Reviews</relationshipLabel>
-    <relationshipName>Gate_Reviews</relationshipName>
+    <relationshipLabel>NGSR Gate Reviews</relationshipLabel>
+    <relationshipName>NGSR_Gate_Reviews</relationshipName>
     <reparentableMasterDetail>false</reparentableMasterDetail>
 </CustomField>
