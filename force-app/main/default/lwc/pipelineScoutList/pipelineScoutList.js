@@ -1,5 +1,5 @@
 import { LightningElement, wire } from 'lwc';
-import getTopCandidates from '@salesforce/apex/PipelineScoutService.getTopCandidates';
+import getTopCandidates from '@salesforce/apex/NGSR_PipelineScoutService.getTopCandidates';
 
 export default class PipelineScoutList extends LightningElement {
     candidates;

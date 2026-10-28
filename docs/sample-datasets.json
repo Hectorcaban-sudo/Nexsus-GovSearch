@@ -1,5 +1,5 @@
 {
-  "Company_Profile__c": [
+  "NGSR_Company_Profile__c": [
     {
       "Name": "Nexsus Sample Company",
       "Primary_NAICS__c": "541511;541512",
@@ -10,7 +10,7 @@
       "Target_Agencies__c": "Department of Defense;Department of Veterans Affairs;General Services Administration;NASA"
     }
   ],
-  "Agency_Hierarchy__c": [
+  "NGSR_Agency_Hierarchy__c": [
     {
       "Name": "Department of Defense",
       "Level__c": "Department"
@@ -44,7 +44,7 @@
       "Level__c": "Department"
     }
   ],
-  "Government_Contact__c": [
+  "NGSR_Government_Contact__c": [
     {
       "Name": "Laura A. Dean",
       "Title__c": "Program Executive Officer, PEO C3T",
@@ -106,7 +106,7 @@
       "Bio_Snippet__c": "DHS IT portfolio oversight."
     }
   ],
-  "Solicitation__c": [
+  "NGSR_Solicitation__c": [
     {
       "Name": "Solicitation SAMPLE-001",
       "Solicitation_Number__c": "W15P7T-26-R-0001"
@@ -140,7 +140,7 @@
       "Solicitation_Number__c": "47QFCA26R0008"
     }
   ],
-  "Award__c": [
+  "NGSR_Award__c": [
     {
       "Name": "Award SAMPLE-001",
       "Incumbent__c": "Unisys Corporation"
@@ -182,7 +182,7 @@
       "Incumbent__c": "Sample Incumbent LLC"
     }
   ],
-  "Contract_Vehicle__c": [
+  "NGSR_Contract_Vehicle__c": [
     {
       "Name": "GSA MAS"
     },
@@ -199,7 +199,7 @@
       "Name": "ITES-4H"
     }
   ],
-  "Teaming_Partner__c": [
+  "NGSR_Teaming_Partner__c": [
     {
       "Name": "TechFlow, Inc.",
       "Workshare_Percent__c": 30
@@ -217,13 +217,13 @@
       "Workshare_Percent__c": 15
     }
   ],
-  "Capture_Plan__c": [
+  "NGSR_Capture_Plan__c": [
     {
       "Name": "Capture Plan SAMPLE-001",
       "Win_Themes__c": "Proven past performance; Agile delivery; Cyber expertise"
     }
   ],
-  "Gate_Review__c": [
+  "NGSR_Gate_Review__c": [
     {
       "Name": "Gate 0 SAMPLE-001",
       "Gate_Number__c": "Gate 0",
@@ -232,7 +232,7 @@
       "Approval_Status__c": "Approved"
     }
   ],
-  "Bid_Decision_Scorecard__c": [
+  "NGSR_Bid_Decision_Scorecard__c": [
     {
       "Name": "Scorecard SAMPLE-001",
       "Technical_Fit_Score__c": 80,
@@ -241,13 +241,13 @@
       "Price_Competitiveness_Weight__c": 25
     }
   ],
-  "Call_Report__c": [
+  "NGSR_Call_Report__c": [
     {
       "Name": "Call Report SAMPLE-001",
       "Objectives__c": "Introduce capabilities and discuss upcoming recompete."
     }
   ],
-  "Forecast__c": [
+  "NGSR_Forecast__c": [
     {
       "Name": "Forecast SAMPLE-001"
     },
@@ -258,7 +258,7 @@
       "Name": "Forecast SAMPLE-003"
     }
   ],
-  "Saved_Search__c": [
+  "NGSR_Saved_Search__c": [
     {
       "Name": "High Score DoD"
     },
@@ -266,12 +266,12 @@
       "Name": "NASA SEWP Recompetes"
     }
   ],
-  "Notice_Version__c": [
+  "NGSR_Notice_Version__c": [
     {
       "Name": "Notice Version SAMPLE-001"
     }
   ],
-  "Strategic_Objective__c": [
+  "NGSR_Strategic_Objective__c": [
     {
       "Name": "Expand DoD IT presence"
     },
@@ -279,7 +279,7 @@
       "Name": "Grow NASA SEWP share"
     }
   ],
-  "Pipeline_Candidate__c": [
+  "NGSR_Pipeline_Candidate__c": [
     {
       "Name": "Sample Opportunity 001",
       "External_Id__c": "SAMPLE-0001",
